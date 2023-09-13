@@ -13,12 +13,16 @@ void information(list );     //Mostrar informacion de un elemento
 //Funciones internas
 void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
 
+//Funcion Menu principal
+void mostrarEstructuras(abb ,list , int );
+
 
 //Funciones del menu ABB
 void loadABB(abb *, Deliveries *);
 int lecturaOperacionesABB(abb *);
 void deleteABB(abb *);
 void changeABB(abb *);
+void informationABB(abb );
 
 
 
@@ -45,10 +49,12 @@ int main(){
         printf("\n|         1. Menu de opciones LSO           |");
         printf("\n|         2. Menu de opciones LSOBB         |");
         printf("\n|         3. Menu de opciones ABB           |");
-        printf("\n|         4. Salir del sistema              |");
+        printf("\n|         4. Comparar estructuras           |");
+        printf("\n|         5. Mostrar estructuras            |");
+        printf("\n|         6. Salir del sistema              |");
         printf("\n|===========================================|\n\n");
         scanf("%d", &menu);
-    }while(menu < 1 || menu > 4);
+    }while(menu < 1 || menu > 6);
     
     switch(menu){
         case 1: do{ 
@@ -58,12 +64,11 @@ int main(){
                     printf("\n|     3.Modificar datos de un envio         |");
                     printf("\n|     4.Consultar informacion de un envio   |");
                     printf("\n|     5.Memorizacion previa                 |");
-                    printf("\n|     6.Mostrar todos los envios            |");
-                    printf("\n|     7.Volver al menu principal            |");
+                    printf("\n|     6.Volver al menu principal            |");
                     printf("\n|===========================================|\n\n");
                     scanf("%d", &opcion);
 
-                    while(opcion < 1 || opcion > 7){
+                    while(opcion < 1 || opcion > 6){
 
                         printf("\n|--------------------------------------|");
                         printf("\n| Por favor, ingrese un valor correcto |");
@@ -73,8 +78,7 @@ int main(){
                         printf("\n|  3.Modificar datos de un envio       |");
                         printf("\n|  4.Consultar informacion de un envio |");
                         printf("\n|  5.Memorizacion previa               |");
-                        printf("\n|  6.Mostrar todos los envios          |");
-                        printf("\n|  7.Volver al menu principal          |");
+                        printf("\n|  6.Volver al menu principal          |");
                         printf("\n|======================================|\n\n");
                         scanf("%d", &opcion);
                     }
@@ -115,20 +119,9 @@ int main(){
 
                         case 5: preload(&lso, &cant);
                                 break;
-
-                        case 6: if(cant == 0){
-                                    printf("\n|-------------------------------------------------|");
-                                    printf("\n| No se pueden mostrar datos. La lista esta vacia |");
-                                    printf("\n|-------------------------------------------------|\n");
-                                }
-                                else{
-                                    printf("\n\n      Mostrando %d elementos\n", cant);
-                                    mostrarLSO(lso);
-                                }
-                                break;
                     }
 
-                }while(opcion != 7);
+                }while(opcion != 6);
                 break;
 
         case 2: 
@@ -141,12 +134,11 @@ int main(){
                     printf("\n|     3.Modificar datos de un envio         |");
                     printf("\n|     4.Consultar informacion de un envio   |");
                     printf("\n|     5.Memorizacion previa                 |");
-                    printf("\n|     6.Mostrar todos los envios            |");
-                    printf("\n|     7.Volver al menu principal            |");
+                    printf("\n|     6.Volver al menu principal            |");
                     printf("\n|===========================================|\n\n");
                     scanf("%d", &opcion);
 
-                    while(opcion < 1 || opcion > 7){
+                    while(opcion < 1 || opcion > 6){
                         printf("\n|--------------------------------------|");
                         printf("\n| Por favor, ingrese un valor correcto |");
                         printf("\n|--------------------------------------|");
@@ -155,8 +147,7 @@ int main(){
                         printf("\n|  3.Modificar datos de un envio       |");
                         printf("\n|  4.Consultar informacion de un envio |");
                         printf("\n|  5.Memorizacion previa               |");
-                        printf("\n|  6.Mostrar todos los envios          |");
-                        printf("\n|  7.Volver al menu principal          |");
+                        printf("\n|  6.Volver al menu principal          |");
                         printf("\n|======================================|\n\n");
                         scanf("%d", &opcion);
                     }
@@ -165,7 +156,14 @@ int main(){
                         case 1: loadABB(&abbTree, &dev);
                                 break;
 
-                        case 2: deleteABB(&abbTree);
+                        case 2: if(getCantABB(abbTree) == 0){
+                                    printf("\n|----------------------------------------------|");
+                                    printf("\n| No se pueden eliminar elementos. Arbol vacio |");
+                                    printf("\n|----------------------------------------------|");
+                                }
+                                else{
+                                    deleteABB(&abbTree);
+                                }
                                 break;
 
                         case 3: if(getCantABB(abbTree) == 0){
@@ -178,23 +176,30 @@ int main(){
                                 }
                                 break;
 
-                        case 4:
-                        case 5:
-                        case 6: if(getCantABB(abbTree) == 0){
+                        case 4: if(getCantABB(abbTree) == 0){
                                     printf("\n|---------------------------------------------|");
                                     printf("\n| No se pueden mostrar elementos. Arbol vacio |");
                                     printf("\n|---------------------------------------------|");
                                 }
                                 else{
-                                    preordenABB((abbTree.root), ok, i);
+                                    informationABB(abbTree);
                                 }
+                                break;
+
+                        case 5: lecturaOperacionesABB(&abbTree);
                                 break;
                     }
 
-                }while(opcion != 7);
+                }while(opcion != 6);
+                break;
+
+        case 4: 
+                break;
+
+        case 5: mostrarEstructuras(abbTree, lso, cant);
                 break;
     }
- }while(menu != 4);
+ }while(menu != 6);
 
  
  printf("\n|===========================================|");
@@ -204,6 +209,136 @@ int main(){
 
  return 0;
 }
+
+
+
+//Funciones del menu principal
+void mostrarEstructuras(abb abbTree, list lso, int cant){
+    
+    int opcion, ok = 1, i = 1, enter;
+
+    do{
+        do{
+            printf("\n|------------------------------------------------------------|");
+            printf("\n|                    Mostrando Estructuras                   |");
+            printf("\n|------------------------------------------------------------|");
+            printf("\n|  0. Salir de Mostrar Estructuras                           |");
+            printf("\n|  1. Mostrar Estructuras                                    |");
+            printf("\n|------------------------------------------------------------|\n");
+            scanf("%d", &enter);
+        }while(enter < 0 || enter > 1);
+        
+        if(enter == 1){
+            do{
+                printf("\n|------------------------------------------------------------|");
+                printf("\n|  1. Mostrar Lista Secuencual Ordenada                      |");
+                printf("\n|  2. Mostrar Lista Secuencial Ordenada con Busqueda Binaria |");
+                printf("\n|  3. Mostrar Arbol Binario de Busqueda                      |");
+                printf("\n|------------------------------------------------------------|\n");
+                scanf("%d", &opcion);
+            }while(opcion < 1 || opcion > 3);
+
+            switch(opcion){
+                case 1: if(cant == 0){
+                            printf("\n|-------------------------------------------------|");
+                            printf("\n| No se pueden mostrar datos. La lista esta vacia |");
+                            printf("\n|-------------------------------------------------|\n");
+                        }
+                        else{
+                            printf("\n\n      Mostrando %d elementos\n", cant);
+                            mostrarLSO(lso);
+                        }
+                        break;
+
+                case 2: 
+                        break;
+
+                case 3: if(getCantABB(abbTree) == 0){
+                            printf("\n|---------------------------------------------|");
+                            printf("\n| No se pueden mostrar elementos. Arbol vacio |");
+                            printf("\n|---------------------------------------------|\n");
+                        }
+                        else{
+                            preordenABB(abbTree.root, ok, i);
+                        }
+                        break;
+            }
+        }
+
+    }while(enter != 0);    
+}
+
+
+//Funciones internas
+void loadDeliveries(Deliveries *dev){
+
+    int i;
+    long d;
+    char c[CODE], n[NAME], date[DATE];
+
+    printf("|---------------------------------------------|\n");
+    printf("| Ingrese el codigo correspondiente al envio: |\n");
+    scanf("%s", c);
+    for(i = 0; c[i] != '\0'; i++){
+        c[i] = toupper(c[i]);
+    }
+    strcpy(dev->code, c);
+
+    do{
+        printf("|------------------------------------|\n");
+        printf("| Ingrese el documento del receptor: |\n");
+        scanf("%ld", &d);
+    }while(d < 0 || d > 99999999);  //rango de documento entre 4.000.000 hasta 50.000.000
+    dev->doc = d;
+
+    do{
+        printf("|----------------------------------|\n");
+        printf("| Ingrese el documento del emisor: |\n");
+        scanf("%ld", &d);
+    }while(d < 0 || d > 99999999);  //rango de documento entre 4.000.000 hasta 50.000.000
+    dev->docSender = d;
+
+    printf("|---------------------------------|\n");
+    printf("| Ingrese el nombre del receptor: |\n");
+    scanf(" %[^\n]", n);
+    for(i = 0; n[i] != '\0'; i++){
+        n[i] = toupper(n[i]);
+    }
+    strcpy(dev->name, n);
+
+    printf("|-------------------------------|\n");
+    printf("| Ingrese el nombre del emisor: |\n");
+    scanf(" %[^\n]", n);
+    for(i = 0; n[i] != '\0'; i++){
+        n[i] = toupper(n[i]);
+    }
+    strcpy(dev->nameSender, n);
+
+    printf("|-----------------------------------|\n");
+    printf("|  Ingrese la direccion del envio:  |\n");
+    scanf(" %[^\n]", n);
+    for(i = 0; n[i] != '\0'; i++){
+        n[i] = toupper(n[i]);
+    }
+    strcpy(dev->address, n);
+
+    printf("|------------------------------|\n");
+    printf("|  Ingrese la fecha de envio:  |\n");
+    scanf(" %[^\n]", date);
+    for(i = 0; date[i] != '\0'; i++){
+        date[i] = toupper(date[i]);
+    }
+    strcpy(dev->dateSender, date);
+
+    printf("|----------------------------------|\n");
+    printf("|  Ingrese la fecha de recepcion:  |\n");
+    scanf(" %[^\n]", date);
+    for(i = 0; date[i] != '\0'; i++){
+        date[i] = toupper(date[i]);
+    }
+    strcpy(dev->dateReceived, date);
+}
+
 
 
 
@@ -480,76 +615,6 @@ void information(list lso){
 }
 
 
-//Funciones internas
-void loadDeliveries(Deliveries *dev){
-
-    int i;
-    long d;
-    char c[CODE], n[NAME], date[DATE];
-
-    printf("|---------------------------------------------|\n");
-    printf("| Ingrese el codigo correspondiente al envio: |\n");
-    scanf("%s", c);
-    for(i = 0; c[i] != '\0'; i++){
-        c[i] = toupper(c[i]);
-    }
-    strcpy(dev->code, c);
-
-    do{
-        printf("|------------------------------------|\n");
-        printf("| Ingrese el documento del receptor: |\n");
-        scanf("%ld", &d);
-    }while(d < 0 || d > 99999999);  //rango de documento entre 4.000.000 hasta 50.000.000
-    dev->doc = d;
-
-    do{
-        printf("|----------------------------------|\n");
-        printf("| Ingrese el documento del emisor: |\n");
-        scanf("%ld", &d);
-    }while(d < 0 || d > 99999999);  //rango de documento entre 4.000.000 hasta 50.000.000
-    dev->docSender = d;
-
-    printf("|---------------------------------|\n");
-    printf("| Ingrese el nombre del receptor: |\n");
-    scanf(" %[^\n]", n);
-    for(i = 0; n[i] != '\0'; i++){
-        n[i] = toupper(n[i]);
-    }
-    strcpy(dev->name, n);
-
-    printf("|-------------------------------|\n");
-    printf("| Ingrese el nombre del emisor: |\n");
-    scanf(" %[^\n]", n);
-    for(i = 0; n[i] != '\0'; i++){
-        n[i] = toupper(n[i]);
-    }
-    strcpy(dev->nameSender, n);
-
-    printf("|-----------------------------------|\n");
-    printf("|  Ingrese la direccion del envio:  |\n");
-    scanf(" %[^\n]", n);
-    for(i = 0; n[i] != '\0'; i++){
-        n[i] = toupper(n[i]);
-    }
-    strcpy(dev->address, n);
-
-    printf("|------------------------------|\n");
-    printf("|  Ingrese la fecha de envio:  |\n");
-    scanf(" %[^\n]", date);
-    for(i = 0; date[i] != '\0'; i++){
-        date[i] = toupper(date[i]);
-    }
-    strcpy(dev->dateSender, date);
-
-    printf("|----------------------------------|\n");
-    printf("|  Ingrese la fecha de recepcion:  |\n");
-    scanf(" %[^\n]", date);
-    for(i = 0; date[i] != '\0'; i++){
-        date[i] = toupper(date[i]);
-    }
-    strcpy(dev->dateReceived, date);
-}
-
 
 //Funciones del menu ABB
 void loadABB(abb *abbTree, Deliveries *dev){
@@ -646,7 +711,7 @@ int lecturaOperacionesABB(abb *abbTree){
     Deliveries dev;
     char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
     long dni, dniS;
-    int highValue, lowValue, enter, i, codeOperator;
+    int highValue, lowValue, evocationValue, enter, i, codeOperator = 0;
 
     FILE *preload;
     preload = fopen("Operaciones-Envios.txt", "r");
@@ -749,13 +814,40 @@ int lecturaOperacionesABB(abb *abbTree){
                                     break;
                         }
                     }
-                    else{
+                }
+            }
+            else{
+                if(codeOperator == 3){
+                    evocationValue = evocacionABB(*abbTree, &dev);
 
+                    if(evocationValue == 1){
+                        printf("\n|---------------------------------|");
+                        printf("\n    INFORMACION DEL ENVIO %s", code);
+                        printf("\n|---------------------------------|\n\n");
+                        printf("\n| Codigo: %s", dev.code);
+                        printf("\n| Dni receptor: %ld", dev.doc);
+                        printf("\n| Dni remitente: %ld", dev.docSender);
+                        printf("\n| Nombre y apellido del receptor: %s", dev.name);
+                        printf("\n| Nombre y apellido del remitente: %s", dev.nameSender);
+                        printf("\n| Domicilio del envio: %s", dev.address);
+                        printf("\n| Fecha de envio: %s", dev.dateSender);
+                        printf("\n| Fecha de recepcion: %s", dev.dateReceived);
                     }
+                    else{
+                        printf("|--------------------------------------------------------------|\n");
+                        printf("    No se han encontrado coincidencias para el codigo %s\n", code);
+                        printf("|--------------------------------------------------------------|\n\n");
+                    }
+                }
+                else{
+                    printf("\n|--------------------------------------------------------|");
+                    printf("\n| Error. Codigo de operacion: %d .Se esperaba 1,2 o 3", codeOperator);
+                    printf("\n|--------------------------------------------------------|");
                 }
             }
         }
         printf("     Elementos cargados: %d\n", getCantABB(*abbTree));
+        codeOperator = 0;
     }
     fclose(preload);
     
@@ -765,5 +857,47 @@ int lecturaOperacionesABB(abb *abbTree){
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
    }while(enter != 1);
+}
 
+
+void informationABB(abb abbTree){
+    Deliveries d;
+    int i, evocationValue, enter;
+    char code[CODE];
+
+    printf("\n|----------------------------------------------------------------|");
+    printf("\n|   Ingrese el codigo del envio que desea obtener informacion:   |");
+    printf("\n|----------------------------------------------------------------|\n");
+    scanf("%s", code);
+    for(i = 0; code[i] != '\0'; i++){
+        code[i] = toupper(code[i]);
+    }
+    strcpy(&d.code, code);
+
+    evocationValue = evocacionABB(abbTree, &d);
+    if(evocationValue == 1){
+        printf("\n|---------------------------------|");
+        printf("\n    INFORMACION DEL ENVIO %s", code);
+        printf("\n|---------------------------------|\n\n");
+        printf("\n| Codigo: %s", d.code);
+        printf("\n| Dni receptor: %ld", d.doc);
+        printf("\n| Dni remitente: %ld", d.docSender);
+        printf("\n| Nombre y apellido del receptor: %s", d.name);
+        printf("\n| Nombre y apellido del remitente: %s", d.nameSender);
+        printf("\n| Domicilio del envio: %s", d.address);
+        printf("\n| Fecha de envio: %s", d.dateSender);
+        printf("\n| Fecha de recepcion: %s", d.dateReceived);
+    }
+    else{
+        printf("|--------------------------------------------------------------|\n");
+        printf("    No se han encontrado coincidencias para el codigo %s\n", code);
+        printf("|--------------------------------------------------------------|\n\n");
+    }
+
+    do{
+        printf("\n|---------------------------------|");
+        printf("\n|  Ingrese 1 para volver al menu  |");
+        printf("\n|---------------------------------|\n");
+        scanf("%d", &enter);
+    }while(enter != 1);
 }

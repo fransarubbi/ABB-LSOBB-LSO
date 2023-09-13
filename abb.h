@@ -22,9 +22,12 @@ typedef struct{
 }abb;
 
 
-abb* initABB(abb *abbTree){
-    abb *arbol = (abb*)malloc(sizeof(abb));
-    (*arbol).root = NULL;
+void initABB(abb *abbTree){
+    //abb *arbol = (abb*)malloc(sizeof(abb));
+    abbTree->root = NULL;
+    abbTree->father = NULL;
+    abbTree->cursor = NULL;
+    abbTree->cant = 0;
 }
 
 
@@ -256,7 +259,7 @@ void preordenABB(Node *nodo, int ok, int i){
             printf("\n|------------------------------|");
             printf("\n| Ingrese 1 para seguir viendo |");
             printf("\n|     Ingrese 0 para salir     |");
-            printf("\n|------------------------------|\n");
+            printf("\n|------------------------------|\n\n");
             scanf("%d", &ok);
         }while(ok < 1 || ok > 1);
     }
@@ -271,13 +274,13 @@ void preordenABB(Node *nodo, int ok, int i){
             printf("\n| Domicilio del envio: %s", nodo->abbDev.address);
             printf("\n| Fecha de envio: %s", nodo->abbDev.dateSender);
             printf("\n| Fecha de recepcion: %s", nodo->abbDev.dateReceived);
-            printf("\n===========================================================");
+            printf("\n===========================================================\n");
 
             if(nodo->leftSon != NULL){
-                printf("\n|----------------|");
-                printf("\n| Hijo izquierdo |");
-                printf("\n|----------------|");
-                printf("\n| Codigo: %s", nodo->leftSon->abbDev.code);
+                printf("\n|------------------|");
+                printf("\n|  Hijo izquierdo  |");
+                printf("\n|------------------|");
+                printf("\n Codigo: %s", nodo->leftSon->abbDev.code);
             }
             else{
                 printf("\n|-------------------------|");
@@ -286,15 +289,15 @@ void preordenABB(Node *nodo, int ok, int i){
             }
 
             if(nodo->rightSon != NULL){
-                printf("\n|--------------|");
-                printf("\n| Hijo derecho |");
-                printf("\n|--------------|");
-                printf("\n| Codigo: %s", nodo->rightSon->abbDev.code);
+                printf("\n|----------------|");
+                printf("\n|  Hijo derecho  |");
+                printf("\n|----------------|");
+                printf("\n Codigo: %s", nodo->rightSon->abbDev.code);
             }
             else{
                 printf("\n|-----------------------|");
                 printf("\n| No tiene hijo derecho |");
-                printf("\n|-----------------------|");
+                printf("\n|-----------------------|\n");
             }
         
             if(nodo->leftSon != NULL){
@@ -333,5 +336,29 @@ void modificarABB(abb *abbTree, Deliveries dev){
     }
 
 }*/
+
+
+/*
+Codificacion de la Evocacion:
+return 0 - Fracaso por no existir coincidencias
+return 1 - Exito
+*/
+int evocacionABB(abb abbTree, Deliveries *dev){
+
+    if(localizarABB(&abbTree, dev->code) == 0){
+        return 0;
+    }
+    else{
+        strcpy((*dev).code, abbTree.cursor->abbDev.code);
+        (*dev).doc = abbTree.cursor->abbDev.doc;
+        (*dev).docSender = abbTree.cursor->abbDev.docSender;
+        strcpy((*dev).name, abbTree.cursor->abbDev.name);
+        strcpy((*dev).nameSender, abbTree.cursor->abbDev.nameSender);
+        strcpy((*dev).address, abbTree.cursor->abbDev.address);
+        strcpy((*dev).dateSender, abbTree.cursor->abbDev.dateSender);
+        strcpy((*dev).dateReceived, abbTree.cursor->abbDev.dateReceived);
+        return 1;
+    }
+}
 
 #endif
