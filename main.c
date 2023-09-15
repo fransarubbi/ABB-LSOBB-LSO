@@ -4,22 +4,25 @@
 #include "abb.h"
 
 //Funciones del menu LSO
-void loadList(list *, Deliveries *, int *);  //Cargar elementos
-void preload(list *, int *);    //Realizar precarga de datos por archivo
-void delete(list *, int *);    //Eliminar elementos
+void loadList(list *, Deliveries *, int *, StructCost *);  //Cargar elementos
+void preload(list *, int *, StructCost *);    //Realizar precarga de datos por archivo
+void delete(list *, int *, StructCost *);    //Eliminar elementos
 void changeList(list *);    //Modificar elementos
 void information(list );     //Mostrar informacion de un elemento
 
 //Funciones internas
 void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
+int lecturaOperacionesABB(StructCost *,abb *);
+int lecturaOperacionesLSO(StructCost *, list *);
+int lecturaOperacionLSOBB(StructCost *);
 
 //Funcion Menu principal
 void mostrarEstructuras(abb ,list , int );
+void compararEstructuras(StructCost *, abb *, list *);
 
 
 //Funciones del menu ABB
 void loadABB(abb *, Deliveries *);
-int lecturaOperacionesABB(abb *);
 void deleteABB(abb *);
 void changeABB(abb *);
 void informationABB(abb );
@@ -32,11 +35,13 @@ int main(){
  abb abbTree;
  list lso;
  Deliveries dev;
+ StructCost c;
  int opcion, cant = 0;
  int menu, i = 1, ok = 1;
 
  init(&lso);
  initABB(&abbTree);
+ initStructCost(&c);
 
  do{
     do{
@@ -90,11 +95,11 @@ int main(){
                                     printf("\n|------------------------------------------------|\n");
                                 }
                                 else{
-                                    loadList(&lso, &dev, &cant);
+                                    loadList(&lso, &dev, &cant, &c);
                                 }
                                 break;
 
-                        case 2: delete(&lso, &cant);
+                        case 2: delete(&lso, &cant, &c);
                                 break;
 
                         case 3: if(cant == 0){
@@ -117,7 +122,7 @@ int main(){
                                 }
                                 break;
 
-                        case 5: preload(&lso, &cant);
+                        case 5: preload(&lso, &cant, &c);
                                 break;
                     }
 
@@ -185,15 +190,12 @@ int main(){
                                     informationABB(abbTree);
                                 }
                                 break;
-
-                        case 5: lecturaOperacionesABB(&abbTree);
-                                break;
                     }
 
                 }while(opcion != 6);
                 break;
 
-        case 4: 
+        case 4: compararEstructuras(&c, &abbTree, &lso);
                 break;
 
         case 5: mostrarEstructuras(abbTree, lso, cant);
@@ -269,6 +271,37 @@ void mostrarEstructuras(abb abbTree, list lso, int cant){
 }
 
 
+void compararEstructuras(StructCost *c, abb *abbTree, list *lso){
+
+    int lecOpLSO, lecOpABB, lecOpLSOBB;
+
+    lecOpLSO = lecturaOperacionesLSO(c, lso);
+    lecOpABB = lecturaOperacionesABB(c, abbTree);
+
+    if(lecOpLSO == 1){
+        printf("\n|----------------------------------------------------------------------|");
+        printf("\n|                 Costos correspondientes a la LSO                     |");
+        printf("\n|----------------------------------------------------------------------|");
+        printf("\n|  Accion      |       Costo Maximo        |       Costo Medio         |");
+        printf("\n|----------------------------------------------------------------------|");
+        printf("\n|  Alta        |  %.f                      |  %.f                      |", c->lso.maxCostInsert, c->lso.medCostInsert);
+        printf("\n|----------------------------------------------------------------------|");
+        printf("\n|  Baja        |  %.f                      |  %.f                      |", c->lso.maxCostSupress, c->lso.medCostSupress);
+        printf("\n|----------------------------------------------------------------------|");
+        printf("\n|  Evoc Exito  |  %.f                      |  %.f                      |", c->lso.maxCostSucEvo, c->lso.medCostSucEvo);
+        printf("\n|----------------------------------------------------------------------|");
+        printf("\n| Evoc Fracaso |  %.f                      |  %.f                      |", c->lso.maxCostFailEvo, c->lso.medCostFailEvo);
+        printf("\n|----------------------------------------------------------------------|");
+    }
+    else{
+        printf("\n|------------------------------------------------------------------------------------|");
+        printf("\n| No se ha podido realizar lectura de datos para la LSO. No hay costos para comparar |");
+        printf("\n|------------------------------------------------------------------------------------|");
+    }
+}
+
+
+
 //Funciones internas
 void loadDeliveries(Deliveries *dev){
 
@@ -340,18 +373,325 @@ void loadDeliveries(Deliveries *dev){
 }
 
 
+int lecturaOperacionesABB(StructCost *c, abb *abbTree){
+
+    Deliveries dev;
+    char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
+    long dni, dniS;
+    int highValueABB, lowValueABB, evocationValueABB, *costABB = 0, i, codeOperator = 0;
+
+    FILE *preload;
+    preload = fopen("Operaciones-Envios.txt", "r");
+
+    if(preload == NULL){
+        printf("|----------------------------------------------|\n");
+        printf("|       No se pudo acceder al archivo          |\n");
+        printf("|----------------------------------------------|\n\n");
+        return 0;
+    }
+    else{
+        while(!feof(preload)){
+
+            fscanf(preload, "%d\n", &codeOperator);
+
+            fscanf(preload, " %[^\n]\n", code);
+            for(i = 0; code[i] != '\0'; i++){
+                code[i] = toupper(code[i]);
+            }
+            strcpy(&dev.code, code);
+
+            if(codeOperator == 1 || codeOperator == 2){
+
+                fscanf(preload, "%ld\n", &dni);
+                dev.doc = dni;
+            
+                fscanf(preload, " %[^\n]\n", nameSender);
+                for(i = 0; nameSender[i] != '\0'; i++){
+                    nameSender[i] = toupper(nameSender[i]);
+                }
+                strcpy(&dev.nameSender, nameSender);
+            
+                fscanf(preload, " %[^\n]\n", addres);
+                for(i = 0; addres[i] != '\0'; i++){
+                    addres[i] = toupper(addres[i]);
+                }  
+                strcpy(&dev.address, addres);
+            
+                fscanf(preload, "%ld\n", &dniS);
+                dev.docSender = dniS;
+
+                fscanf(preload, " %[^\n]\n", name);
+                for(i = 0; name[i] != '\0'; i++){
+                    name[i] = toupper(name[i]);
+                }
+                strcpy(&dev.name, name);
+            
+                fscanf(preload, " %[^\n]\n", dateS);
+                for(i = 0; dateS[i] != '\0'; i++){
+                    dateS[i] = toupper(dateS[i]);
+                }
+                strcpy(&dev.dateSender, dateS);
+
+                fscanf(preload, " %[^\n]\n", dateR);
+                for(i = 0; dateR[i] != '\0'; i++){
+                    dateR[i] = toupper(dateR[i]);
+                }
+                strcpy(&dev.dateReceived, dateR);
+
+                if(codeOperator == 1){
+
+                    highValueABB = altaABB(abbTree, dev);
+                    switch(highValueABB){
+                        case 0: printf("|----------------------------------------------|\n");
+                                printf("| Error al cargar elemento. No hay mas espacio |\n");
+                                printf("|----------------------------------------------|\n\n");
+                                break;
+            
+                        case 1: printf("|-------------------------------------------------|\n");
+                                printf("| Error al cargar elemento. El elemento ya existe |\n");
+                                printf("|-------------------------------------------------|\n\n");
+                                break;
+
+                        case 2: printf("|----------------------------------------------|\n");
+                                printf("|            Carga exitosa de datos            |\n");
+                                printf("|----------------------------------------------|\n\n");
+                                break;
+                    }
+                }
+                else{
+                    if(codeOperator == 2){
+                        lowValueABB = bajaABB(abbTree, code);
+
+                        switch(lowValueABB){
+                            case 0: printf("|----------------------------------------------|\n");
+                                    printf("| Error al cargar elemento. No hay mas espacio |\n");
+                                    printf("|----------------------------------------------|\n\n");
+                                    exit(1);
+                                    break;
+            
+                            case 1: printf("|-------------------------------------------------|\n");
+                                    printf("| Error al cargar elemento. El elemento ya existe |\n");
+                                    printf("|-------------------------------------------------|\n\n");
+                                    break;
+
+                            case 2: printf("|----------------------------------------------|\n");
+                                    printf("|            Carga exitosa de datos            |\n");
+                                    printf("|----------------------------------------------|\n\n");
+                                    break;
+                        }
+                    }
+                }
+            }
+            else{
+                if(codeOperator == 3){
+                    evocationValueABB = evocacionABB(*abbTree, &dev);
+
+                    if(evocationValueABB == 1){
+                        printf("\n|---------------------------------|");
+                        printf("\n    INFORMACION DEL ENVIO %s", code);
+                        printf("\n|---------------------------------|\n\n");
+                        printf("\n| Codigo: %s", dev.code);
+                        printf("\n| Dni receptor: %ld", dev.doc);
+                        printf("\n| Dni remitente: %ld", dev.docSender);
+                        printf("\n| Nombre y apellido del receptor: %s", dev.name);
+                        printf("\n| Nombre y apellido del remitente: %s", dev.nameSender);
+                        printf("\n| Domicilio del envio: %s", dev.address);
+                        printf("\n| Fecha de envio: %s", dev.dateSender);
+                        printf("\n| Fecha de recepcion: %s", dev.dateReceived);
+                    }
+                    else{
+                        printf("|--------------------------------------------------------------|\n");
+                        printf("    No se han encontrado coincidencias para el codigo %s\n", code);
+                        printf("|--------------------------------------------------------------|\n\n");
+                    }
+                }
+                else{
+                    printf("\n|--------------------------------------------------------|");
+                    printf("\n| Error. Codigo de operacion: %d .Se esperaba 1,2 o 3", codeOperator);
+                    printf("\n|--------------------------------------------------------|");
+                }
+            }
+        }
+        printf("     Elementos cargados: %d\n", getCantABB(*abbTree));
+        codeOperator = 0;
+        fclose(preload);
+        return 1;
+    }
+}
+
+
+int lecturaOperacionesLSO(StructCost *c, list *lso){
+
+    Deliveries dev;
+    char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
+    long dni, dniS;
+    int highValue, lowValue, evoValue, *cant = 0, *cost = 0, enter, i, codeOperator = 0;
+
+    FILE *preload;
+    preload = fopen("Operaciones-Envios.txt", "r");
+
+    if(preload == NULL){
+        printf("|----------------------------------------------|\n");
+        printf("|       No se pudo acceder al archivo          |\n");
+        printf("|----------------------------------------------|\n\n");
+        return 0;
+    }
+    else{
+        while(!feof(preload)){
+
+            fscanf(preload, "%d\n", &codeOperator);
+
+            fscanf(preload, " %[^\n]\n", code);
+            for(i = 0; code[i] != '\0'; i++){
+                code[i] = toupper(code[i]);
+            }
+            strcpy(&dev.code, code);
+
+            if(codeOperator == 1 || codeOperator == 2){
+
+                fscanf(preload, "%ld\n", &dni);
+                dev.doc = dni;
+            
+                fscanf(preload, " %[^\n]\n", nameSender);
+                for(i = 0; nameSender[i] != '\0'; i++){
+                    nameSender[i] = toupper(nameSender[i]);
+                }
+                strcpy(&dev.nameSender, nameSender);
+            
+                fscanf(preload, " %[^\n]\n", addres);
+                for(i = 0; addres[i] != '\0'; i++){
+                    addres[i] = toupper(addres[i]);
+                }  
+                strcpy(&dev.address, addres);
+            
+                fscanf(preload, "%ld\n", &dniS);
+                dev.docSender = dniS;
+
+                fscanf(preload, " %[^\n]\n", name);
+                for(i = 0; name[i] != '\0'; i++){
+                    name[i] = toupper(name[i]);
+                }
+                strcpy(&dev.name, name);
+            
+                fscanf(preload, " %[^\n]\n", dateS);
+                for(i = 0; dateS[i] != '\0'; i++){
+                    dateS[i] = toupper(dateS[i]);
+                }
+                strcpy(&dev.dateSender, dateS);
+
+                fscanf(preload, " %[^\n]\n", dateR);
+                for(i = 0; dateR[i] != '\0'; i++){
+                    dateR[i] = toupper(dateR[i]);
+                }
+                strcpy(&dev.dateReceived, dateR);
+
+                if(codeOperator == 1){
+                    *cost = 0;
+                    highValue = altaLSO(lso, dev, &cost);
+                    switch(highValue){
+                        case 0: printf("|----------------------------------------------|\n");
+                                printf("| Error al cargar elemento. No hay mas espacio |\n");
+                                printf("|----------------------------------------------|\n\n");
+                                break;
+            
+                        case 1: printf("|-------------------------------------------------|\n");
+                                printf("| Error al cargar elemento. El elemento ya existe |\n");
+                                printf("|-------------------------------------------------|\n\n");
+                                break;
+
+                        case 2: printf("|----------------------------------------------|\n");
+                                printf("|            Carga exitosa de datos            |\n");
+                                printf("|----------------------------------------------|\n\n");
+                                *cant = (*cant) + 1;
+                                if(c->lso.maxCostInsert < (*cost)){
+                                    c->lso.maxCostInsert = (*cost);
+                                }
+                                c->lso.cantInsert = c->lso.cantInsert + 1;
+                                c->lso.costAcumInsert = c->lso.costAcumInsert + (*cost);
+                                c->lso.medCostInsert = (c->lso.costAcumInsert/c->lso.cantInsert);
+                                break;
+                    }
+                }
+                else{
+                    if(codeOperator == 2){
+                        *cost = 0;
+                        lowValue = bajaLSO(lso, dev, &cost);
+
+                        switch(lowValue){
+                            case 0: printf("|-----------------------------------------------------|\n");
+                                    printf("|   Error al borrar elemento. No existe en la lista   |\n");
+                                    printf("|-----------------------------------------------------|\n\n");
+                                    break;
+
+                            case 1: printf("|-----------------------------------------------------|\n");
+                                    printf("|  Error al borrar elemento. Ha cancelado el proceso  |\n");
+                                    printf("|-----------------------------------------------------|\n\n");
+                                    break;
+
+                            case 2: printf("|----------------------------------------------|\n");
+                                    printf("|            Baja exitosa de datos             |\n");
+                                    printf("|----------------------------------------------|\n\n");
+                                    *cant = (*cant) - 1;
+                                    if(c->lso.maxCostSupress < (*cost)){
+                                        c->lso.maxCostSupress = (*cost);
+                                    }
+                                    c->lso.cantSupress = c->lso.cantSupress + 1;
+                                    c->lso.costAcumSupress = c->lso.costAcumSupress + (*cost);
+                                    c->lso.medCostInsert = (c->lso.costAcumSupress/c->lso.cantSupress);
+                                    break;
+                        }
+                    }
+                }
+            }
+            else{
+                if(codeOperator == 3){
+                    evoValue = evocacionLSO(*lso, &dev);
+                    if(evoValue == 1){
+                        printf("\n|---------------------------------|");
+                        printf("\n    INFORMACION DEL ENVIO %s", code);
+                        printf("\n|---------------------------------|\n\n");
+                        printf("\n| Codigo: %s", dev.code);
+                        printf("\n| Dni receptor: %ld", dev.doc);
+                        printf("\n| Dni remitente: %ld", dev.docSender);
+                        printf("\n| Nombre y apellido del receptor: %s", dev.name);
+                        printf("\n| Nombre y apellido del remitente: %s", dev.nameSender);
+                        printf("\n| Domicilio del envio: %s", dev.address);
+                        printf("\n| Fecha de envio: %s", dev.dateSender);
+                        printf("\n| Fecha de recepcion: %s", dev.dateReceived);
+                    }
+                    else{
+                        printf("|--------------------------------------------------------------|\n");
+                        printf("    No se han encontrado coincidencias para el codigo %s\n", code);
+                        printf("|--------------------------------------------------------------|\n\n");
+                    }
+                }
+                else{
+                    printf("\n|--------------------------------------------------------|");
+                    printf("\n| Error. Codigo de operacion: %d .Se esperaba 1,2 o 3", codeOperator);
+                    printf("\n|--------------------------------------------------------|");
+                }
+            }
+        }
+        printf("     Elementos cargados: %d\n", *cant);
+        codeOperator = 0;
+        fclose(preload);
+        return 1;
+    }
+}
+
+
 
 
 //Funciones del menu LSO
-void loadList(list *lso, Deliveries *dev, int *cant){
+void loadList(list *lso, Deliveries *dev, int *cant, StructCost *c){
 
-    int highValue, enter;
+    int highValue, enter, *cost = 0;
 
     printf("\n|--------------------------------|");
     printf("\n|-------- Cargando Datos --------|");
     printf("\n|--------------------------------|\n\n");
     loadDeliveries(dev);
-    highValue = altaLSO(lso, *dev);
+    highValue = altaLSO(lso, *dev, &cost);
     switch(highValue){
         case 0: printf("|----------------------------------------------|\n");
                 printf("| Error al cargar elemento. No hay mas espacio |\n");
@@ -367,6 +707,12 @@ void loadList(list *lso, Deliveries *dev, int *cant){
                 printf("|           Carga exitosa de datos             |\n");
                 printf("|----------------------------------------------|\n\n");
                 *cant = *cant + 1;
+                if(c->lso.maxCostInsert < (*cost)){
+                    c->lso.maxCostInsert = (*cost);
+                }
+                c->lso.cantInsert = c->lso.cantInsert + 1;
+                c->lso.costAcumInsert = c->lso.costAcumInsert + (*cost);
+                c->lso.medCostInsert = (c->lso.costAcumInsert/c->lso.cantInsert);
                 break;
     }
 
@@ -379,12 +725,12 @@ void loadList(list *lso, Deliveries *dev, int *cant){
 }
 
 
-void preload(list *lso, int *cant){
+void preload(list *lso, int *cant, StructCost *c){
     
     Deliveries dev;
     char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
     long dni, dniS;
-    int highValue, enter, i;
+    int highValue, enter, i, *cost = 0;
 
     FILE *preload;
     preload = fopen("Envios.txt", "r");
@@ -439,7 +785,7 @@ void preload(list *lso, int *cant){
             }
             strcpy(&dev.dateReceived, dateR);
 
-            highValue = altaLSO(lso, dev);
+            highValue = altaLSO(lso, dev, &cost);
 
             switch(highValue){
                 case 0: printf("|----------------------------------------------|\n");
@@ -457,12 +803,18 @@ void preload(list *lso, int *cant){
                         printf("|            Carga exitosa de datos            |\n");
                         printf("|----------------------------------------------|\n\n");
                         *cant = *cant + 1;
+                        if(c->lso.maxCostInsert < (*cost)){
+                            c->lso.maxCostInsert = (*cost);
+                        }
+                        c->lso.cantInsert = c->lso.cantInsert + 1;
+                        c->lso.costAcumInsert = c->lso.costAcumInsert + (*cost);
+                        c->lso.medCostInsert = (c->lso.costAcumInsert/c->lso.cantInsert);
                         break;
             }
         }
         printf("           Elementos cargados: %d\n", *cant);
+        fclose(preload);
     }
-    fclose(preload);
     
     do{
         printf("\n|---------------------------------|");
@@ -473,11 +825,11 @@ void preload(list *lso, int *cant){
 }
 
 
-void delete(list *lso, int *cant){
+void delete(list *lso, int *cant, StructCost *c){
 
     Deliveries dev;
     char code[CODE];
-    int n, i = 0, j = 0, lowValue, evocationValue, enter;
+    int n, i = 0, j = 0, lowValue, evocationValue, enter, *cost = 0;
 
     if(*cant < 1){
         printf("\n|------------------------------------------|");
@@ -503,7 +855,7 @@ void delete(list *lso, int *cant){
             }
             strcpy(&dev.code, code);
 
-            lowValue = bajaLSO(lso, dev);
+            lowValue = bajaLSO(lso, dev, &cost);
             switch(lowValue){
                 case 0: printf("|-----------------------------------------------------|\n");
                         printf("|   Error al borrar elemento. No existe en la lista   |\n");
@@ -522,6 +874,12 @@ void delete(list *lso, int *cant){
                         printf("|----------------------------------------------|\n\n");
                         j++;
                         *cant = *cant - 1;
+                        if(c->lso.maxCostSupress < (*cost)){
+                            c->lso.maxCostSupress = (*cost);
+                        }
+                        c->lso.cantSupress = c->lso.cantSupress + 1;
+                        c->lso.costAcumSupress = c->lso.costAcumSupress + (*cost);
+                        c->lso.medCostInsert = (c->lso.costAcumSupress/c->lso.cantSupress);
                         break;
             }
         }while(j < n);
@@ -697,160 +1055,6 @@ void deleteABB(abb *abbTree){
             }
     }while(j < n);
 
-    do{
-        printf("\n|---------------------------------|");
-        printf("\n|  Ingrese 1 para volver al menu  |");
-        printf("\n|---------------------------------|\n");
-        scanf("%d", &enter);
-   }while(enter != 1);
-}
-
-
-int lecturaOperacionesABB(abb *abbTree){
-
-    Deliveries dev;
-    char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
-    long dni, dniS;
-    int highValue, lowValue, evocationValue, enter, i, codeOperator = 0;
-
-    FILE *preload;
-    preload = fopen("Operaciones-Envios.txt", "r");
-
-    if(preload == NULL){
-        printf("|----------------------------------------------|\n");
-        printf("|       No se pudo acceder al archivo          |\n");
-        printf("|----------------------------------------------|\n\n");
-        exit(1);
-    }
-    else{
-        while(!feof(preload)){
-
-            fscanf(preload, "%d\n", &codeOperator);
-
-            fscanf(preload, " %[^\n]\n", code);
-            for(i = 0; code[i] != '\0'; i++){
-                code[i] = toupper(code[i]);
-            }
-            strcpy(&dev.code, code);
-
-            if(codeOperator == 1 || codeOperator == 2){
-
-                fscanf(preload, "%ld\n", &dni);
-                dev.doc = dni;
-            
-                fscanf(preload, " %[^\n]\n", nameSender);
-                for(i = 0; nameSender[i] != '\0'; i++){
-                    nameSender[i] = toupper(nameSender[i]);
-                }
-                strcpy(&dev.nameSender, nameSender);
-            
-                fscanf(preload, " %[^\n]\n", addres);
-                for(i = 0; addres[i] != '\0'; i++){
-                    addres[i] = toupper(addres[i]);
-                }  
-                strcpy(&dev.address, addres);
-            
-                fscanf(preload, "%ld\n", &dniS);
-                dev.docSender = dniS;
-
-                fscanf(preload, " %[^\n]\n", name);
-                for(i = 0; name[i] != '\0'; i++){
-                    name[i] = toupper(name[i]);
-                }
-                strcpy(&dev.name, name);
-            
-                fscanf(preload, " %[^\n]\n", dateS);
-                for(i = 0; dateS[i] != '\0'; i++){
-                    dateS[i] = toupper(dateS[i]);
-                }
-                strcpy(&dev.dateSender, dateS);
-
-                fscanf(preload, " %[^\n]\n", dateR);
-                for(i = 0; dateR[i] != '\0'; i++){
-                    dateR[i] = toupper(dateR[i]);
-                }
-                strcpy(&dev.dateReceived, dateR);
-
-                if(codeOperator == 1){
-                    highValue = altaABB(abbTree, dev);
-
-                    switch(highValue){
-                        case 0: printf("|----------------------------------------------|\n");
-                                printf("| Error al cargar elemento. No hay mas espacio |\n");
-                                printf("|----------------------------------------------|\n\n");
-                                exit(1);
-                                break;
-            
-                        case 1: printf("|-------------------------------------------------|\n");
-                                printf("| Error al cargar elemento. El elemento ya existe |\n");
-                                printf("|-------------------------------------------------|\n\n");
-                                break;
-
-                        case 2: printf("|----------------------------------------------|\n");
-                                printf("|            Carga exitosa de datos            |\n");
-                                printf("|----------------------------------------------|\n\n");
-                                break;
-                    }
-                }
-                else{
-                    if(codeOperator == 2){
-                        lowValue = bajaABB(abbTree, code);
-
-                        switch(lowValue){
-                            case 0: printf("|----------------------------------------------|\n");
-                                    printf("| Error al cargar elemento. No hay mas espacio |\n");
-                                    printf("|----------------------------------------------|\n\n");
-                                    exit(1);
-                                    break;
-            
-                            case 1: printf("|-------------------------------------------------|\n");
-                                    printf("| Error al cargar elemento. El elemento ya existe |\n");
-                                    printf("|-------------------------------------------------|\n\n");
-                                    break;
-
-                            case 2: printf("|----------------------------------------------|\n");
-                                    printf("|            Carga exitosa de datos            |\n");
-                                    printf("|----------------------------------------------|\n\n");
-                                    break;
-                        }
-                    }
-                }
-            }
-            else{
-                if(codeOperator == 3){
-                    evocationValue = evocacionABB(*abbTree, &dev);
-
-                    if(evocationValue == 1){
-                        printf("\n|---------------------------------|");
-                        printf("\n    INFORMACION DEL ENVIO %s", code);
-                        printf("\n|---------------------------------|\n\n");
-                        printf("\n| Codigo: %s", dev.code);
-                        printf("\n| Dni receptor: %ld", dev.doc);
-                        printf("\n| Dni remitente: %ld", dev.docSender);
-                        printf("\n| Nombre y apellido del receptor: %s", dev.name);
-                        printf("\n| Nombre y apellido del remitente: %s", dev.nameSender);
-                        printf("\n| Domicilio del envio: %s", dev.address);
-                        printf("\n| Fecha de envio: %s", dev.dateSender);
-                        printf("\n| Fecha de recepcion: %s", dev.dateReceived);
-                    }
-                    else{
-                        printf("|--------------------------------------------------------------|\n");
-                        printf("    No se han encontrado coincidencias para el codigo %s\n", code);
-                        printf("|--------------------------------------------------------------|\n\n");
-                    }
-                }
-                else{
-                    printf("\n|--------------------------------------------------------|");
-                    printf("\n| Error. Codigo de operacion: %d .Se esperaba 1,2 o 3", codeOperator);
-                    printf("\n|--------------------------------------------------------|");
-                }
-            }
-        }
-        printf("     Elementos cargados: %d\n", getCantABB(*abbTree));
-        codeOperator = 0;
-    }
-    fclose(preload);
-    
     do{
         printf("\n|---------------------------------|");
         printf("\n|  Ingrese 1 para volver al menu  |");

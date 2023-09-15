@@ -29,7 +29,7 @@ int localizarLSO(list lso, char c[], int *position){   //Localizar
     }
 
     *position = i;  
-    if(strcmp(lso.deliveriesList[i].code, c) == 0){  
+    if((strcmp(lso.deliveriesList[i].code, c) == 0) && (i <= lso.last)){  
         return 1;
     }
     else{
@@ -44,7 +44,7 @@ return 0 - Fracaso por lista llena
 return 1 - Fracaso por elemento existente
 return 2 - Exito
 */
-int altaLSO(list *lso, Deliveries dev){    //Alta
+int altaLSO(list *lso, Deliveries dev, int *cost){    //Alta
     int position, last;
 
     last = lso->last;  //Variable last para no modificar el valor de lso.last
@@ -57,6 +57,7 @@ int altaLSO(list *lso, Deliveries dev){    //Alta
             //El elemento no existe en la lista
             while(position <= last){   //Realizar shifteo a derecha
                 lso->deliveriesList[last + 1] = lso->deliveriesList[last];
+                (*cost) = (*cost) + 1;
                 last = last - 1;
             }
             lso->deliveriesList[position] = dev;   //Ingresar el nuevo elemento en el sitio adecuado
@@ -76,7 +77,7 @@ return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 */
-int bajaLSO(list *lso, Deliveries dev){      //Baja
+int bajaLSO(list *lso, Deliveries dev, int *cost){      //Baja
     int position, ok;
     
     if(localizarLSO(*lso, dev.code, &position) == 0){
@@ -105,11 +106,13 @@ int bajaLSO(list *lso, Deliveries dev){      //Baja
         if(ok == 1){
             if(position == lso->last){
                 lso->last = lso->last - 1;
+                *cost = (*cost) + 1;
             }
             else{
                 while(position < lso->last){
                     lso->deliveriesList[position] = lso->deliveriesList[position + 1];
                     position = position + 1;
+                    *cost = (*cost) + 1;
                 }
                 lso->last = lso->last - 1;
             }
