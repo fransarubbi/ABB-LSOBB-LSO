@@ -3,6 +3,11 @@
 #include "lso.h"
 #include "abb.h"
 
+
+//Funcion menu principal
+void mostrarEstructuras(abb , list , int );
+
+
 //Funciones del menu LSO
 void loadList(list *, Deliveries *, int *, StructCost *);  //Cargar elementos
 void preload(list *, int *, StructCost *);    //Realizar precarga de datos por archivo
@@ -10,18 +15,17 @@ void delete(list *, int *, StructCost *);    //Eliminar elementos
 void changeList(list *);    //Modificar elementos
 void information(list );     //Mostrar informacion de un elemento
 
-//Funciones internas
-void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
-
-//Funcion Menu principal
-void mostrarEstructuras(abb ,list , int );
-
 
 //Funciones del menu ABB
 void loadABB(abb *, Deliveries *);
 void deleteABB(abb *);
 void changeABB(abb *);
 void informationABB(abb );
+void preloadABB(abb *);
+
+
+//Funciones internas
+void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
 
 
 
@@ -173,7 +177,7 @@ int main(){
                                     printf("\n|-----------------------------------------------|");
                                 }
                                 else{
-
+                                    changeABB(&abbTree);
                                 }
                                 break;
 
@@ -185,6 +189,9 @@ int main(){
                                 else{
                                     informationABB(abbTree);
                                 }
+                                break;
+
+                        case 5: preloadABB(&abbTree);
                                 break;
                     }
 
@@ -203,6 +210,8 @@ int main(){
  printf("\n|===========================================|");
  printf("\n|       GRACIAS POR USAR EL SISTEMA         |");
  printf("\n|             ENVIOS EL REVOLEO             |");
+ printf("\n|===========================================|");
+ printf("\n|      Sarubbi Franco - Orozco Mateo        |");
  printf("\n|===========================================|\n\n");
 
  return 0;
@@ -265,8 +274,6 @@ void mostrarEstructuras(abb abbTree, list lso, int cant){
 
     }while(enter != 0);    
 }
-
-
 
 
 
@@ -541,7 +548,7 @@ void changeList(list *lso){
     
     Deliveries d;
     char code[CODE];
-    int i, changeValue, evocationValue, enter;
+    int i, changeValue, enter;
 
     printf("|----------------------------------------------------|\n");
     printf("|  Ingrese el codigo del envio que desea modificar:  |\n");
@@ -652,6 +659,99 @@ void loadABB(abb *abbTree, Deliveries *dev){
 }
 
 
+void preloadABB(abb *abbTree){
+
+    Deliveries dev;
+    char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
+    long dni, dniS;
+    int highValue, enter, i;
+
+    FILE *preload;
+    preload = fopen("Envios.txt", "r");
+
+    if(preload == NULL){
+        printf("|----------------------------------------------|\n");
+        printf("|       No se pudo acceder al archivo          |\n");
+        printf("|----------------------------------------------|\n\n");
+        exit(1);
+    }
+    else{
+        while(!feof(preload)){
+            fscanf(preload, " %[^\n]\n", code);
+            for(i = 0; code[i] != '\0'; i++){
+                code[i] = toupper(code[i]);
+            }
+            strcpy(&dev.code, code);
+            
+            fscanf(preload, "%ld\n", &dni);
+            dev.doc = dni;
+            
+            fscanf(preload, " %[^\n]\n", nameSender);
+            for(i = 0; nameSender[i] != '\0'; i++){
+                nameSender[i] = toupper(nameSender[i]);
+            }
+            strcpy(&dev.nameSender, nameSender);
+            
+            fscanf(preload, " %[^\n]\n", addres);
+            for(i = 0; addres[i] != '\0'; i++){
+                addres[i] = toupper(addres[i]);
+            }
+            strcpy(&dev.address, addres);
+            
+            fscanf(preload, "%ld\n", &dniS);
+            dev.docSender = dniS;
+
+            fscanf(preload, " %[^\n]\n", name);
+            for(i = 0; name[i] != '\0'; i++){
+                name[i] = toupper(name[i]);
+            }
+            strcpy(&dev.name, name);
+            
+            fscanf(preload, " %[^\n]\n", dateS);
+            for(i = 0; dateS[i] != '\0'; i++){
+                dateS[i] = toupper(dateS[i]);
+            }
+            strcpy(&dev.dateSender, dateS);
+
+            fscanf(preload, " %[^\n]\n", dateR);
+            for(i = 0; dateR[i] != '\0'; i++){
+                dateR[i] = toupper(dateR[i]);
+            }
+            strcpy(&dev.dateReceived, dateR);
+
+            highValue = altaABB(abbTree, dev);
+
+            switch(highValue){
+                case 0: printf("|----------------------------------------------|\n");
+                        printf("| Error al cargar elemento. No hay mas espacio |\n");
+                        printf("|----------------------------------------------|\n\n");
+                        exit(1);
+                        break;
+            
+                case 1: printf("|-------------------------------------------------|\n");
+                        printf("| Error al cargar elemento. El elemento ya existe |\n");
+                        printf("|-------------------------------------------------|\n\n");
+                        break;
+
+                case 2: printf("|----------------------------------------------|\n");
+                        printf("|            Carga exitosa de datos            |\n");
+                        printf("|----------------------------------------------|\n\n");
+                        break;
+            }
+        }
+        printf("           Elementos cargados: %d\n", getCantABB(*abbTree));
+        fclose(preload);
+    }
+    
+    do{
+        printf("\n|---------------------------------|");
+        printf("\n|  Ingrese 1 para volver al menu  |");
+        printf("\n|---------------------------------|\n");
+        scanf("%d", &enter);
+   }while(enter != 1);
+}
+
+
 void deleteABB(abb *abbTree){
 
     Deliveries dev;
@@ -704,6 +804,41 @@ void deleteABB(abb *abbTree){
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
    }while(enter != 1);
+}
+
+
+void changeABB(abb *abbTree){
+
+    Deliveries d;
+    char code[CODE];
+    int i, changeValue, enter;
+
+    printf("|----------------------------------------------------|\n");
+    printf("|  Ingrese el codigo del envio que desea modificar:  |\n");
+    scanf("%s", code);
+    for(i = 0; code[i] != '\0'; i++){
+        code[i] = toupper(code[i]);
+    }
+    strcpy(&d.code, code);
+
+    changeValue = modificarABB(abbTree, &d);
+    if(changeValue == 1){
+        printf("|-------------------------------------------------------|\n");
+        printf("|   Se han realizado las modificaciones correctamente   |\n");
+        printf("|-------------------------------------------------------|\n");
+    }
+    else{
+        printf("|----------------------------------------------|\n");
+        printf("|         Error al modificar los datos         |\n");
+        printf("|----------------------------------------------|\n");
+    }
+
+    do{
+        printf("\n|---------------------------------|");
+        printf("\n|  Ingrese 1 para volver al menu  |");
+        printf("\n|---------------------------------|\n");
+        scanf("%d", &enter);
+    }while(enter != 1);
 }
 
 
