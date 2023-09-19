@@ -7,7 +7,7 @@
 
 
 typedef struct{
-    Deliveries deliverieslistBB[SIZE];
+    Deliveries deliveriesListBB[SIZE];
     int last;
 }listBB;
 
@@ -22,35 +22,36 @@ Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento
 return 1 - Exito
 */
-int localizarLSOBB(listBB lso, char c[], int *position){   //Localizar 
+int localizarLSOBB(listBB lsobb, char c[], int *position){   //Localizar 
 
     int li = -1;
-    int ls = lso.last;
+    int ls = lsobb.last;
     int t = (floor((li + ls + 2)/2));
 
-    if(lso.last == -1){
+    if(lsobb.last == -1){
         *position = 0;   //Posicion donde deberia ir el elemento a cargar
         return 0;        //Lista vacia, por tanto fracasa la localizacion
     }
     else{
         
-        while(li + 1 < ls){   
+        while((li + 1) < ls){   
             
-            if(strcmp(lso.deliverieslistBB[t].code, c) < 0){  
+            if((strcmp(lsobb.deliveriesListBB[t].code, c) < 0) || (strcmp(lsobb.deliveriesListBB[t].code, c) == 0)){  
                 li = t - 1;   //elemento buscado es mayor que lo que tengo en t
             }
             else{
                 ls = t - 1;   //elemento buscado es menor que lo que tengo en t
             }
+
             t = (floor((li + ls + 2)/2));
         }
-        
-        if(strcmp(lso.deliverieslistBB[ls].code, c) == 0){
+
+        if(strcmp(lsobb.deliveriesListBB[ls].code, c) == 0){
             *position = ls;
             return 1;
         }
         else{
-            if(strcmp(lso.deliverieslistBB[ls].code, c) < 0){
+            if(strcmp(lsobb.deliveriesListBB[ls].code, c) < 0){
                 *position = ls + 1;
             }
             else{
@@ -68,23 +69,23 @@ return 0 - Fracaso por lista llena
 return 1 - Fracaso por elemento existente
 return 2 - Exito
 */
-int altaLSOBB(listBB *lso, Deliveries dev){    //Alta
+int altaLSOBB(listBB *lsobb, Deliveries dev){    //Alta
     int position, last;
 
-    last = lso->last;  //Variable last para no modificar el valor de lso.last
+    last = lsobb->last;  //Variable last para no modificar el valor de lso.last
 
     if(last < (SIZE - 1)){
-        if(localizarLSOBB(*lso, dev.code, &position) == 1){  //Elemento localizado en la lista
+        if(localizarLSOBB(*lsobb, dev.code, &position) == 1){  //Elemento localizado en la lista
             return 1; 
         }
         else{
             //El elemento no existe en la lista
             while(position <= last){   //Realizar shifteo a derecha
-                lso->deliverieslistBB[last + 1] = lso->deliverieslistBB[last];
+                lsobb->deliveriesListBB[last + 1] = lsobb->deliveriesListBB[last];
                 last = last - 1;
             }
-            lso->deliverieslistBB[position] = dev;   //Ingresar el nuevo elemento en el sitio adecuado
-            lso->last = lso->last + 1;   //Actualizar el valor de lso.last
+            lsobb->deliveriesListBB[position] = dev;   //Ingresar el nuevo elemento en el sitio adecuado
+            lsobb->last = lsobb->last + 1;   //Actualizar el valor de lso.last
             return 2; 
         }
     }
@@ -100,10 +101,10 @@ return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 */
-int bajaLSOBB(listBB *lso, Deliveries dev){      //Baja
+int bajaLSOBB(listBB *lsobb, Deliveries dev){      //Baja
     int position, ok;
     
-    if(localizarLSOBB(*lso, dev.code, &position) == 0){
+    if(localizarLSOBB(*lsobb, dev.code, &position) == 0){
         return 0;   //No podemos dar de baja porque no existe el elemento
     }
     else{
@@ -111,14 +112,14 @@ int bajaLSOBB(listBB *lso, Deliveries dev){      //Baja
             printf("\n===========================================================");
             printf("\n            Esta por eliminar datos. Estos son:         ");
             printf("\n===========================================================\n");
-            printf("\n| Codigo: %s", lso->deliverieslistBB[position].code);
-            printf("\n| Dni receptor: %ld", lso->deliverieslistBB[position].doc);
-            printf("\n| Dni remitente: %ld", lso->deliverieslistBB[position].docSender);
-            printf("\n| Nombre y apellido del receptor: %s", lso->deliverieslistBB[position].name);
-            printf("\n| Nombre y apellido del remitente: %s", lso->deliverieslistBB[position].nameSender);
-            printf("\n| Domicilio del envio: %s", lso->deliverieslistBB[position].address);
-            printf("\n| Fecha de envio: %s", lso->deliverieslistBB[position].dateSender);
-            printf("\n| Fecha de recepcion: %s", lso->deliverieslistBB[position].dateReceived);
+            printf("\n| Codigo: %s", lsobb->deliveriesListBB[position].code);
+            printf("\n| Dni receptor: %ld", lsobb->deliveriesListBB[position].doc);
+            printf("\n| Dni remitente: %ld", lsobb->deliveriesListBB[position].docSender);
+            printf("\n| Nombre y apellido del receptor: %s", lsobb->deliveriesListBB[position].name);
+            printf("\n| Nombre y apellido del remitente: %s", lsobb->deliveriesListBB[position].nameSender);
+            printf("\n| Domicilio del envio: %s", lsobb->deliveriesListBB[position].address);
+            printf("\n| Fecha de envio: %s", lsobb->deliveriesListBB[position].dateSender);
+            printf("\n| Fecha de recepcion: %s", lsobb->deliveriesListBB[position].dateReceived);
             printf("\n===========================================================");
             printf("\n                    ¿Esta de acuerdo?                    ");
             printf("\n             0.No                        1.Si            ");
@@ -127,15 +128,15 @@ int bajaLSOBB(listBB *lso, Deliveries dev){      //Baja
         }while(ok < 0 || ok > 1);
 
         if(ok == 1){
-            if(position == lso->last){
-                lso->last = lso->last - 1;
+            if(position == lsobb->last){
+                lsobb->last = lsobb->last - 1;
             }
             else{
-                while(position < lso->last){
-                    lso->deliverieslistBB[position] = lso->deliverieslistBB[position + 1];
+                while(position < lsobb->last){
+                    lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
                     position = position + 1;
                 }
-                lso->last = lso->last - 1;
+                lsobb->last = lsobb->last - 1;
             }
             return 2;  //Baja exitosa
         }
@@ -151,21 +152,21 @@ Codificacion de la Evocacion:
 return 0 - Fracaso por no existir coincidencias
 return 1 - Exito
 */
-int evocacionLSOBB(listBB lso, Deliveries *dev){    //Evocacion
+int evocacionLSOBB(listBB lsobb, Deliveries *dev){    //Evocacion
     int position;
 
-    if((localizarLSOBB(lso, (*dev).code, &position)) == 0){
+    if((localizarLSOBB(lsobb, (*dev).code, &position)) == 0){
         return 0;
     }
     else{
-        strcpy((*dev).code, lso.deliverieslistBB[position].code);
-        (*dev).doc = lso.deliverieslistBB[position].doc;
-        (*dev).docSender = lso.deliverieslistBB[position].docSender;
-        strcpy((*dev).name, lso.deliverieslistBB[position].name);
-        strcpy((*dev).nameSender, lso.deliverieslistBB[position].nameSender);
-        strcpy((*dev).address, lso.deliverieslistBB[position].address);
-        strcpy((*dev).dateSender, lso.deliverieslistBB[position].dateSender);
-        strcpy((*dev).dateReceived, lso.deliverieslistBB[position].dateReceived);
+        strcpy((*dev).code, lsobb.deliveriesListBB[position].code);
+        (*dev).doc = lsobb.deliveriesListBB[position].doc;
+        (*dev).docSender = lsobb.deliveriesListBB[position].docSender;
+        strcpy((*dev).name, lsobb.deliveriesListBB[position].name);
+        strcpy((*dev).nameSender, lsobb.deliveriesListBB[position].nameSender);
+        strcpy((*dev).address, lsobb.deliveriesListBB[position].address);
+        strcpy((*dev).dateSender, lsobb.deliveriesListBB[position].dateSender);
+        strcpy((*dev).dateReceived, lsobb.deliveriesListBB[position].dateReceived);
         return 1;
     }
 }
@@ -177,18 +178,18 @@ return 0 - Fracaso por no existir elemento
 return 1 - Fracaso por existir elemento, pero no coincide con los atributos
 return 2 - Exito
 */
-int perteneceLSOBB(Deliveries dev, listBB lso){   //Pertenece
+int perteneceLSOBB(Deliveries dev, listBB lsobb){   //Pertenece
     int position;
     
-    if((localizarLSOBB(lso, dev.code, &position)) == 1){
-        int a = strcmp((dev).code, lso.deliverieslistBB[position].code);
-        int b = strcmp((dev).name, lso.deliverieslistBB[position].name);
-        int c = strcmp((dev).nameSender, lso.deliverieslistBB[position].nameSender);
-        int d = strcmp((dev).address, lso.deliverieslistBB[position].address);
-        int e = strcmp((dev).dateSender, lso.deliverieslistBB[position].dateSender);
-        int f = strcmp((dev).dateReceived, lso.deliverieslistBB[position].dateReceived);
+    if((localizarLSOBB(lsobb, dev.code, &position)) == 1){
+        int a = strcmp((dev).code, lsobb.deliveriesListBB[position].code);
+        int b = strcmp((dev).name, lsobb.deliveriesListBB[position].name);
+        int c = strcmp((dev).nameSender, lsobb.deliveriesListBB[position].nameSender);
+        int d = strcmp((dev).address, lsobb.deliveriesListBB[position].address);
+        int e = strcmp((dev).dateSender, lsobb.deliveriesListBB[position].dateSender);
+        int f = strcmp((dev).dateReceived, lsobb.deliveriesListBB[position].dateReceived);
 
-        if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lso.deliverieslistBB[position].doc) && (dev.docSender == lso.deliverieslistBB[position].docSender)){
+        if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lsobb.deliveriesListBB[position].doc) && (dev.docSender == lsobb.deliveriesListBB[position].docSender)){
             return 2;
         }
         else{
@@ -206,25 +207,25 @@ Codificacion del modificar:
 return 0 - Fracaso por elemento inexistente en listBBa
 return 1 - Exito en la modificacion
 */
-int modificarLSOBB(listBB *lso, Deliveries *dev){  //Modificar
+int modificarLSOBB(listBB *lsobb, Deliveries *dev){  //Modificar
     int position, i, j = 0, option;
     char n[NAME], date[DATE];
 
-    if((localizarLSOBB(*lso, (*dev).code, &position)) == 1){
+    if((localizarLSOBB(*lsobb, (*dev).code, &position)) == 1){
        
-        (*dev) = lso->deliverieslistBB[position];
+        (*dev) = lsobb->deliveriesListBB[position];
 
         printf("\n==================================================================");
         printf("\n               Esta por modificar datos. Estos son:         ");
         printf("\n==================================================================\n");
-        printf("\n| Codigo: %s", lso->deliverieslistBB[position].code);
-        printf("\n| Dni receptor: %ld", lso->deliverieslistBB[position].doc);
-        printf("\n| Dni remitente: %ld", lso->deliverieslistBB[position].docSender);
-        printf("\n| Nombre y apellido del receptor: %s", lso->deliverieslistBB[position].name);
-        printf("\n| Nombre y apellido del remitente: %s", lso->deliverieslistBB[position].nameSender);
-        printf("\n| Domicilio del envio: %s", lso->deliverieslistBB[position].address);
-        printf("\n| Fecha de envio: %s", lso->deliverieslistBB[position].dateSender);
-        printf("\n| Fecha de recepcion: %s", lso->deliverieslistBB[position].dateReceived);
+        printf("\n| Codigo: %s", lsobb->deliveriesListBB[position].code);
+        printf("\n| Dni receptor: %ld", lsobb->deliveriesListBB[position].doc);
+        printf("\n| Dni remitente: %ld", lsobb->deliveriesListBB[position].docSender);
+        printf("\n| Nombre y apellido del receptor: %s", lsobb->deliveriesListBB[position].name);
+        printf("\n| Nombre y apellido del remitente: %s", lsobb->deliveriesListBB[position].nameSender);
+        printf("\n| Domicilio del envio: %s", lsobb->deliveriesListBB[position].address);
+        printf("\n| Fecha de envio: %s", lsobb->deliveriesListBB[position].dateSender);
+        printf("\n| Fecha de recepcion: %s", lsobb->deliveriesListBB[position].dateReceived);
         printf("\n===================================================================\n");
 
         do{
@@ -313,7 +314,7 @@ int modificarLSOBB(listBB *lso, Deliveries *dev){  //Modificar
 
         }while(j == 1);
         
-        lso->deliverieslistBB[position] = (*dev);
+        lsobb->deliveriesListBB[position] = (*dev);
         return 1;    //Modificacion exitosa
     }
     else{
@@ -322,19 +323,19 @@ int modificarLSOBB(listBB *lso, Deliveries *dev){  //Modificar
 }
 
 
-void mostrarLSOBB(listBB lso){      //Mostrar
+void mostrarLSOBB(listBB lsobb){      //Mostrar
     int i, enter, cont = 0;
 
-    for(i = 0; i <= lso.last; i++){
+    for(i = 0; i <= lsobb.last; i++){
         printf("\n|========================================|");
-        printf("\n| Codigo: %s", lso.deliverieslistBB[i].code);
-        printf("\n| Dni receptor: %ld", lso.deliverieslistBB[i].doc);
-        printf("\n| Dni remitente: %ld", lso.deliverieslistBB[i].docSender);
-        printf("\n| Nombre y apellido del receptor: %s", lso.deliverieslistBB[i].name);
-        printf("\n| Nombre y apellido del remitente: %s", lso.deliverieslistBB[i].nameSender);
-        printf("\n| Domicilio del envio: %s", lso.deliverieslistBB[i].address);
-        printf("\n| Fecha de envio: %s", lso.deliverieslistBB[i].dateSender);
-        printf("\n| Fecha de recepcion: %s", lso.deliverieslistBB[i].dateReceived);
+        printf("\n| Codigo: %s", lsobb.deliveriesListBB[i].code);
+        printf("\n| Dni receptor: %ld", lsobb.deliveriesListBB[i].doc);
+        printf("\n| Dni remitente: %ld", lsobb.deliveriesListBB[i].docSender);
+        printf("\n| Nombre y apellido del receptor: %s", lsobb.deliveriesListBB[i].name);
+        printf("\n| Nombre y apellido del remitente: %s", lsobb.deliveriesListBB[i].nameSender);
+        printf("\n| Domicilio del envio: %s", lsobb.deliveriesListBB[i].address);
+        printf("\n| Fecha de envio: %s", lsobb.deliveriesListBB[i].dateSender);
+        printf("\n| Fecha de recepcion: %s", lsobb.deliveriesListBB[i].dateReceived);
         printf("\n|========================================|\n\n");
         cont++;
 
