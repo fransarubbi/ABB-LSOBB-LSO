@@ -17,6 +17,16 @@ void initLSOBB(listBB *lso){  //Inicializar la listBBa es poner last en -1 (vaci
 }
 
 
+//Reset lista para comparar estructura
+void resetLSOBB(listBB *lsobb){
+    int i;
+    lsobb->last = -1;
+    for(i = 0; i <= (SIZE - 1); i++){
+        initDev(&(lsobb->deliveriesListBB[i]));
+    }
+}
+
+
 /*
 Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento

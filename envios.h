@@ -104,4 +104,17 @@ typedef struct{
     char dateReceived[DATE];
 }Deliveries;
 
+
+void initDev(Deliveries *dev){
+    dev->doc = 0;
+    dev->docSender = 0;
+    strcpy(dev->code, "ZZZZZZZ");
+    strcpy(dev->name, "0");
+    strcpy(dev->nameSender, "0");
+    strcpy(dev->address, "0");
+    strcpy(dev->dateSender, "0");
+    strcpy(dev->dateReceived, "0");
+    //Valores invalidos
+}
+
 #endif

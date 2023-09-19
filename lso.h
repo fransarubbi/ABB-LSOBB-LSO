@@ -16,6 +16,16 @@ void init(list *lso){  //Inicializar la lista es poner last en -1 (vacia)
 }
 
 
+//Reset lista para comparar estructura
+void resetLSO(list *lso){
+    int i;
+    lso->last = -1;
+    for(i = 0; i <= (SIZE - 1); i++){
+        initDev(&(lso->deliveriesList[i]));
+    }
+}
+
+
 /*
 Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento

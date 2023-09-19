@@ -31,6 +31,20 @@ void initABB(abb *abbTree){
 }
 
 
+//Reset arbol para comparar estructuras. Es recursivo aplicando preorden
+void resetABB(Node *nodo){
+    if(nodo != NULL){        
+        if(nodo->leftSon != NULL){
+            resetABB(nodo->leftSon);
+        }
+        if(nodo->rightSon != NULL){
+            resetABB(nodo->rightSon);
+        }
+        free(nodo);
+    }
+}
+
+
 //Obtener la cantidad de nodos internos
 int getCantABB(abb abbTree){  
     return abbTree.cant;

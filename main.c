@@ -7,6 +7,7 @@
 
 //Funciones menu principal
 void mostrarEstructuras(abb , list , listBB , int , int );
+void compararEstructuras(abb , list , listBB , StructCost , int , int );
 
 
 //Funciones del menu LSO
@@ -35,8 +36,8 @@ void preloadABB(abb *);
 
 //Funciones internas
 void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
-
-
+void resetAll(list *, listBB *, abb *, int *, int *);
+void lecturaOperaciones(StructCost *, list *, listBB *, abb *);
 
 
 int main(){
@@ -274,7 +275,8 @@ int main(){
                 }while(opcion != 6);
                 break;
 
-        case 4: 
+        case 4: resetAll(&lso, &lsobb, &abbTree, &cant, &cantBB);
+                compararEstructuras(abbTree, lso, lsobb, c, cant, cantBB);
                 break;
 
         case 5: mostrarEstructuras(abbTree, lso, lsobb, cant, cantBB);
@@ -359,6 +361,11 @@ void mostrarEstructuras(abb abbTree, list lso, listBB lsobb, int cant, int cantB
 }
 
 
+void compararEstructuras(abb abbTree, list lso, listBB lsobb, StructCost c, int cant, int cantBB){
+
+}
+
+
 
 //Funciones internas
 void loadDeliveries(Deliveries *dev){
@@ -431,6 +438,21 @@ void loadDeliveries(Deliveries *dev){
 }
 
 
+void resetAll(list *lso, listBB *lsobb, abb *abbTree, int *cant, int *cantBB){
+    
+    resetABB(abbTree->root);
+    abbTree->root = NULL;
+    abbTree->cant = 0;
+    resetLSO(lso);
+    resetLSOBB(lsobb);
+    *cant = 0;
+    *cantBB = 0;
+}
+
+
+void lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree){
+
+}
 
 
 //Funciones del menu LSO
