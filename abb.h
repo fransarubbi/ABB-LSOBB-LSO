@@ -56,23 +56,28 @@ Codificacion de Localizacion:
 return 0 - Fracaso, no existe elemento
 return 1 - Exito
 */
-int localizarABB(abb *abbTree, char c[]){
+int localizarABB(abb *abbTree, char c[], float *costo){
 
+    float costLoc = 0.0;
     //Colocamos los cursores en la raiz
-    (*abbTree).father = abbTree->root;
-    (*abbTree).cursor = abbTree->root;
+    (*abbTree).father = abbTree->root;  
+    (*abbTree).cursor = abbTree->root;  
+    costLoc = 1;   //Cada movimiento cuesta 0.5, por tanto la suma da 1
 
    while((abbTree->cursor != NULL) && (strcmp(abbTree->cursor->abbDev.code, c) != 0)){  //Recorrer si no se esta en nodo externo y no coincide el codigo
         if(strcmp(abbTree->cursor->abbDev.code, c) < 0){    //Codigo almacenado menor que codigo buscado
             (*abbTree).father = abbTree->cursor;            //Al padre del nodo le damos el cursor
             (*abbTree).cursor = abbTree->cursor->rightSon;  //Al cursor le damos su hijo derecho
+            costLoc += 1;
         }
         else{                                               //Codigo almacenado mayor que codigo buscado
             (*abbTree).father = abbTree->cursor;            //Al padre del nodo le damos el cursor
             (*abbTree).cursor = abbTree->cursor->leftSon;   //Al cursor le damos su hijo izquiero
+            costLoc += 1;
         }
     }
 
+    *costo = costLoc;
     if(abbTree->cursor != NULL){   //Cursor en nodo externo
         return 1;                  //Fracaso
     }
@@ -88,7 +93,10 @@ return 0 - Fracaso por falta de memoria
 return 1 - Fracaso por elemento existente
 return 2 - Exito
 */
-int altaABB(abb *abbTree, Deliveries dev){
+int altaABB(abb *abbTree, Deliveries dev, float *costo){
+
+    float costLoc = 0.0;
+    float cost = 0.0;
 
     Node *nodo = (Node*)malloc(sizeof(Node));  //Primero verifico que haya memoria disponible
     if(nodo == NULL){
@@ -96,27 +104,32 @@ int altaABB(abb *abbTree, Deliveries dev){
         return 0;  //Fracaso, no hay espacio
     }
     else{
-        if(localizarABB(abbTree, dev.code) == 0){   //No encontro el elemento en el arbol
+        if(localizarABB(abbTree, dev.code, &costLoc) == 0){   //No encontro el elemento en el arbol
             nodo->abbDev = dev;     //Asignacion de datos al nodo auxiliar
             nodo->leftSon = NULL;   //Hijo izquierdo a null
             nodo->rightSon = NULL;  //Hijo derecho a null
+            cost += 2;
 
             if(abbTree->root == NULL){  //Arbol vacio
                 abbTree->root = nodo;   //Asignar el nodo auxiliar a la raiz del arbol
                 abbTree->cant = abbTree->cant + 1;  //Sumar 1 a la cantidad de nodos del arbol
+                cost += 0.5;
                 return 2;  //Exito
             }
             else{
                 if(strcmp(abbTree->father->abbDev.code, nodo->abbDev.code) < 0){ 
                     abbTree->father->rightSon = nodo;  //Codigo del nuevo nodo, es mayor al codigo del padre
                     abbTree->cant = abbTree->cant + 1;  //Sumar 1 a la cantidad de nodos del arbol
+                    cost += 0.5;
                 }
                 else{
                     abbTree->father->leftSon = nodo;  //Codigo del nuevo nodo, es menor al codigo del padre
                     abbTree->cant = abbTree->cant + 1;  //Sumar 1 a la cantidad de nodos del arbol
+                    cost += 0.5;
                 }
                 return 2;  //Exito
             }
+            *costo = cost;
         }
         else{
             free((void*)nodo);
@@ -132,12 +145,13 @@ return 0 - Fracaso por elemento inexistente en arbol
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 */
-int bajaABB(abb *abbTree, char c[]){
-
+int bajaABB(abb *abbTree, char c[], float *costo){
+    float costLoc = 0.0;
+    float cost = 0.0;
     int ok;
     Node *aux1, *aux2;
 
-    if(localizarABB(abbTree, c) == 1){
+    if(localizarABB(abbTree, c, &costLoc) == 1){
         do{
             printf("\n===========================================================");
             printf("\n            Esta por eliminar datos. Estos son:         ");
@@ -164,6 +178,7 @@ int bajaABB(abb *abbTree, char c[]){
                     free((void*)(abbTree->cursor));
                     abbTree->root = NULL;  //Colocar raiz en NULL (arbol vacio)
                     abbTree->cant = abbTree->cant - 1;
+                    cost += 0.5;
                     return 2;   //Exito
                 }
                 else{
@@ -171,12 +186,14 @@ int bajaABB(abb *abbTree, char c[]){
                         abbTree->father->leftSon == NULL;             //El hijo izquierdo del nodo padre, a NULL (hijo eliminado)
                         free((void*)(abbTree->cursor));
                         abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
+                        cost += 0.5;
                         return 2;                                     //Exito
                     }
                     else{                                             //Cursor en el hijo derecho de un nodo
                         abbTree->father->rightSon = NULL;             //Eliminar nodo sin descendia que es hijo derecho de otro nodo
                         free((void*)(abbTree->cursor));               
                         abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
+                        cost += 0.5;
                         return 2;                                     //Exito
                     }
                 }
@@ -189,6 +206,7 @@ int bajaABB(abb *abbTree, char c[]){
                     abbTree->root = abbTree->cursor->rightSon;       //A la raiz le damos su hijo derecho
                     free((void*)(abbTree->cursor));
                     abbTree->cant = abbTree->cant - 1;               //Decrementar cantidad
+                    cost += 0.5;
                     return 2;                                        //Exito
                 }
                 else{
@@ -196,12 +214,14 @@ int bajaABB(abb *abbTree, char c[]){
                         abbTree->father->leftSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
                         free((void*)(abbTree->cursor));
                         abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
+                        cost += 0.5;
                         return 2;                                   //Exito
                     }
                     else{                                           //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
                         abbTree->father->rightSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
                         free((void*)(abbTree->cursor));                         
                         abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
+                        cost += 0.5;
                         return 2;                                   //Exito
                     }
                 }
@@ -212,6 +232,7 @@ int bajaABB(abb *abbTree, char c[]){
                         abbTree->root = abbTree->cursor->leftSon;    //A la raiz le damos su hijo izquierdo
                         free((void*)(abbTree->cursor));
                         abbTree->cant = abbTree->cant - 1;           //Decrementar cantidad
+                        cost += 0.5;
                         return 2;                                    //Exito
                     }
                     else{
@@ -219,12 +240,14 @@ int bajaABB(abb *abbTree, char c[]){
                             abbTree->father->leftSon = abbTree->cursor->leftSon;  //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
                             free((void*)(abbTree->cursor));
                             abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
+                            cost += 0.5;
                             return 2;                                             //Exito
                         }
                         else{                                                     //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
                             abbTree->father->rightSon = abbTree->cursor->leftSon; //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
                             free((void*)(abbTree->cursor));
                             abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
+                            cost += 0.5;
                             return 2;                                             //Exito
                         }
                     }
@@ -238,25 +261,33 @@ int bajaABB(abb *abbTree, char c[]){
                 abbTree->father = abbTree->cursor;              //Al puntero padre le damos cursor
                 abbTree->cursor = abbTree->cursor->rightSon;    //Al cursor le damos su hijo derecho
                 //Esta asignacion la hacemos para aplicar la politica de reemplazo "menor de los mayores"
+                cost += 1;
 
                 while(abbTree->cursor->leftSon != NULL){        //Iterar en la medida que el hijo izquierdo no sea un nodo externo
                     abbTree->cursor = abbTree->cursor->leftSon; //Al cursor le damos su hijo izquierdo, buscando el menor de los mayores
+                    cost += 0.5;
                 }
                 abbTree->father->abbDev = abbTree->cursor->abbDev;  //Asignar datos del menor nodo, al nodo que se quiere eliminar
                 //Ahora tenemos dos nodos con la misma informacion, luego eliminamos el nodo que tiene cursor
+                cost += 0.5;
 
                 if(abbTree->father->rightSon != abbTree->cursor){   //Si el hijo derecho del nodo padre, es distinto del cursor
                     abbTree->father = abbTree->father->rightSon;    //A padre le damos su hijo derecho
+                    cost += 0.5;
                     while(abbTree->father->leftSon != abbTree->cursor){   //Iterar en la medida que el hijo izquierdo de padre, sea distinto del cursor
                         abbTree->father = abbTree->father->leftSon;       //A padre le damos su hijo izquierdo
+                        cost += 0.5;
                     }
                     abbTree->father->leftSon = abbTree->cursor->rightSon; //Al hijo izquierdo de padre, le damos el hijo derecho del cursor
+                    cost += 0.5;
                 }
                 else{                                                       //Si el hijo derecho del nodo padre, es igual al cursor
                     abbTree->father->rightSon = abbTree->cursor->rightSon;  //Al hijo derecho de padre, le damos el hijo derecho del cursor
+                    cost += 0.5;
                 }
                 free((void*)(abbTree->cursor));
                 abbTree->cant = abbTree->cant - 1;     //Decrementar cantidad
+                *costo = cost;
                 return 2;                              //Exito
             }
         }
@@ -275,9 +306,12 @@ Codificacion de la Evocacion:
 return 0 - Fracaso por no existir coincidencias
 return 1 - Exito
 */
-int evocacionABB(abb abbTree, Deliveries *dev){
+int evocacionABB(abb abbTree, Deliveries *dev, float *costo){
 
-    if(localizarABB(&abbTree, dev->code) == 0){
+float costLoc = 0.0;
+
+    if(localizarABB(&abbTree, dev->code, &costLoc) == 0){
+        *costo = costLoc;
         return 0;
     }
     else{
@@ -289,6 +323,7 @@ int evocacionABB(abb abbTree, Deliveries *dev){
         strcpy((*dev).address, abbTree.cursor->abbDev.address);
         strcpy((*dev).dateSender, abbTree.cursor->abbDev.dateSender);
         strcpy((*dev).dateReceived, abbTree.cursor->abbDev.dateReceived);
+        *costo = costLoc;
         return 1;
     }
 }
@@ -303,8 +338,9 @@ int modificarABB(abb *abbTree, Deliveries *dev){
 
     int option, j = 0, i;
     char n[NAME], date[DATE];
+    float costLoc = 0.0;
 
-    if(localizarABB(abbTree, (*dev).code) == 1){
+    if(localizarABB(abbTree, (*dev).code, &costLoc) == 1){
 
         (*dev) = abbTree->cursor->abbDev;
         printf("\n==================================================================");

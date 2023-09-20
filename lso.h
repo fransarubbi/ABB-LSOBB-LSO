@@ -31,14 +31,17 @@ Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento
 return 1 - Exito
 */
-int localizarLSO(list lso, char c[], int *position){   //Localizar 
+int localizarLSO(list lso, char c[], int *position, float *costo){   //Localizar 
     int i = 0;
+    float cost = 0.0;
 
     while((i <= lso.last) && strcmp(lso.deliveriesList[i].code, c) < 0){   //Porque esta ordenada de menor a mayor
         i++;
+        cost += 1;
     }
 
     *position = i;  
+    *costo = cost;
     if((strcmp(lso.deliveriesList[i].code, c) == 0) && (i <= lso.last)){  
         return 1;
     }
@@ -54,13 +57,15 @@ return 0 - Fracaso por lista llena
 return 1 - Fracaso por elemento existente
 return 2 - Exito
 */
-int altaLSO(list *lso, Deliveries dev){    //Alta
+int altaLSO(list *lso, Deliveries dev, float *costo){    //Alta
     int position, last;
+    float cost = 0.0;
+    float costLoc = 0.0;
 
     last = lso->last;  //Variable last para no modificar el valor de lso.last
 
     if(last < (SIZE - 1)){
-        if(localizarLSO(*lso, dev.code, &position) == 1){  //Elemento localizado en la lista
+        if(localizarLSO(*lso, dev.code, &position, &costLoc) == 1){  //Elemento localizado en la lista
             return 1; 
         }
         else{
@@ -68,9 +73,12 @@ int altaLSO(list *lso, Deliveries dev){    //Alta
             while(position <= last){   //Realizar shifteo a derecha
                 lso->deliveriesList[last + 1] = lso->deliveriesList[last];
                 last = last - 1;
+                cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
             }
             lso->deliveriesList[position] = dev;   //Ingresar el nuevo elemento en el sitio adecuado
+            cost += 0.5;
             lso->last = lso->last + 1;   //Actualizar el valor de lso.last
+            *costo = cost;
             return 2; 
         }
     }
@@ -86,10 +94,12 @@ return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 */
-int bajaLSO(list *lso, Deliveries dev){      //Baja
+int bajaLSO(list *lso, Deliveries dev, float *costo){      //Baja
     int position, ok;
+    float costLoc = 0.0;
+    float cost = 0.0;
     
-    if(localizarLSO(*lso, dev.code, &position) == 0){
+    if(localizarLSO(*lso, dev.code, &position, &costLoc) == 0){
         return 0;   //No podemos dar de baja porque no existe el elemento
     }
     else{
@@ -120,8 +130,10 @@ int bajaLSO(list *lso, Deliveries dev){      //Baja
                 while(position < lso->last){
                     lso->deliveriesList[position] = lso->deliveriesList[position + 1];
                     position = position + 1;
+                    cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
                 }
                 lso->last = lso->last - 1;
+                *costo = cost;
             }
             return 2;  //Baja exitosa
         }
@@ -137,10 +149,12 @@ Codificacion de la Evocacion:
 return 0 - Fracaso por no existir coincidencias
 return 1 - Exito
 */
-int evocacionLSO(list lso, Deliveries *dev){    //Evocacion
+int evocacionLSO(list lso, Deliveries *dev, float *costo){    //Evocacion
     int position;
+    float costLoc = 0.0;
 
-    if((localizarLSO(lso, (*dev).code, &position)) == 0){
+    if((localizarLSO(lso, (*dev).code, &position, &costLoc)) == 0){
+        *costo = costLoc;
         return 0;
     }
     else{
@@ -152,6 +166,7 @@ int evocacionLSO(list lso, Deliveries *dev){    //Evocacion
         strcpy((*dev).address, lso.deliveriesList[position].address);
         strcpy((*dev).dateSender, lso.deliveriesList[position].dateSender);
         strcpy((*dev).dateReceived, lso.deliveriesList[position].dateReceived);
+        *costo = costLoc;
         return 1;
     }
 }
@@ -165,8 +180,9 @@ return 2 - Exito
 */
 int perteneceLSO(Deliveries dev, list lso){   //Pertenece
     int position;
+    float costLoc = 0.0;
     
-    if((localizarLSO(lso, dev.code, &position)) == 1){
+    if((localizarLSO(lso, dev.code, &position, &costLoc)) == 1){
         int a = strcmp((dev).code, lso.deliveriesList[position].code);
         int b = strcmp((dev).name, lso.deliveriesList[position].name);
         int c = strcmp((dev).nameSender, lso.deliveriesList[position].nameSender);
@@ -195,8 +211,9 @@ return 1 - Exito en la modificacion
 int modificarLSO(list *lso, Deliveries *dev){  //Modificar
     int position, i, j = 0, option;
     char n[NAME], date[DATE];
+    float costLoc = 0.0;
 
-    if((localizarLSO(*lso, (*dev).code, &position)) == 1){
+    if((localizarLSO(*lso, (*dev).code, &position, &costLoc)) == 1){
        
         (*dev) = lso->deliveriesList[position];
 

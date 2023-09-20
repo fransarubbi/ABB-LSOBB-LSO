@@ -32,11 +32,12 @@ Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento
 return 1 - Exito
 */
-int localizarLSOBB(listBB lsobb, char c[], int *position){   //Localizar 
+int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Localizar 
 
     int li = -1;
     int ls = lsobb.last;
     int t = (floor((li + ls + 2)/2));
+    float costLoc = 0.0;
 
     if(lsobb.last == -1){
         *position = 0;   //Posicion donde deberia ir el elemento a cargar
@@ -52,10 +53,11 @@ int localizarLSOBB(listBB lsobb, char c[], int *position){   //Localizar
             else{
                 ls = t - 1;   //elemento buscado es menor que lo que tengo en t
             }
-
+            costLoc += 1;
             t = (floor((li + ls + 2)/2));
         }
 
+        *costo = costLoc;
         if(strcmp(lsobb.deliveriesListBB[ls].code, c) == 0){
             *position = ls;
             return 1;
@@ -79,22 +81,27 @@ return 0 - Fracaso por lista llena
 return 1 - Fracaso por elemento existente
 return 2 - Exito
 */
-int altaLSOBB(listBB *lsobb, Deliveries dev){    //Alta
+int altaLSOBB(listBB *lsobb, Deliveries dev, float *costo){    //Alta
     int position, last;
+    float costLoc = 0.0;
+    float cost = 0.0;
 
     last = lsobb->last;  //Variable last para no modificar el valor de lso.last
 
     if(last < (SIZE - 1)){
-        if(localizarLSOBB(*lsobb, dev.code, &position) == 1){  //Elemento localizado en la lista
+        if(localizarLSOBB(*lsobb, dev.code, &position, &costLoc) == 1){  //Elemento localizado en la lista
             return 1; 
         }
         else{
             //El elemento no existe en la lista
             while(position <= last){   //Realizar shifteo a derecha
                 lsobb->deliveriesListBB[last + 1] = lsobb->deliveriesListBB[last];
+                cost += 1.5;
                 last = last - 1;
             }
             lsobb->deliveriesListBB[position] = dev;   //Ingresar el nuevo elemento en el sitio adecuado
+            cost += 0.5;
+            *costo = cost;
             lsobb->last = lsobb->last + 1;   //Actualizar el valor de lso.last
             return 2; 
         }
@@ -111,10 +118,12 @@ return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 */
-int bajaLSOBB(listBB *lsobb, Deliveries dev){      //Baja
+int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo){      //Baja
     int position, ok;
+    float costLoc = 0.0;
+    float cost = 0.0;
     
-    if(localizarLSOBB(*lsobb, dev.code, &position) == 0){
+    if(localizarLSOBB(*lsobb, dev.code, &position, &costLoc) == 0){
         return 0;   //No podemos dar de baja porque no existe el elemento
     }
     else{
@@ -145,8 +154,10 @@ int bajaLSOBB(listBB *lsobb, Deliveries dev){      //Baja
                 while(position < lsobb->last){
                     lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
                     position = position + 1;
+                    cost += 1.5;
                 }
                 lsobb->last = lsobb->last - 1;
+                *costo = cost;
             }
             return 2;  //Baja exitosa
         }
@@ -162,10 +173,12 @@ Codificacion de la Evocacion:
 return 0 - Fracaso por no existir coincidencias
 return 1 - Exito
 */
-int evocacionLSOBB(listBB lsobb, Deliveries *dev){    //Evocacion
+int evocacionLSOBB(listBB lsobb, Deliveries *dev, float *costo){    //Evocacion
     int position;
+    float costLoc = 0.0;
 
-    if((localizarLSOBB(lsobb, (*dev).code, &position)) == 0){
+    if((localizarLSOBB(lsobb, (*dev).code, &position, &costLoc)) == 0){
+        *costo = costLoc;
         return 0;
     }
     else{
@@ -177,6 +190,7 @@ int evocacionLSOBB(listBB lsobb, Deliveries *dev){    //Evocacion
         strcpy((*dev).address, lsobb.deliveriesListBB[position].address);
         strcpy((*dev).dateSender, lsobb.deliveriesListBB[position].dateSender);
         strcpy((*dev).dateReceived, lsobb.deliveriesListBB[position].dateReceived);
+        *costo = costLoc;
         return 1;
     }
 }
@@ -190,8 +204,9 @@ return 2 - Exito
 */
 int perteneceLSOBB(Deliveries dev, listBB lsobb){   //Pertenece
     int position;
+    float costLoc = 0.0;
     
-    if((localizarLSOBB(lsobb, dev.code, &position)) == 1){
+    if((localizarLSOBB(lsobb, dev.code, &position, &costLoc)) == 1){
         int a = strcmp((dev).code, lsobb.deliveriesListBB[position].code);
         int b = strcmp((dev).name, lsobb.deliveriesListBB[position].name);
         int c = strcmp((dev).nameSender, lsobb.deliveriesListBB[position].nameSender);
@@ -220,8 +235,9 @@ return 1 - Exito en la modificacion
 int modificarLSOBB(listBB *lsobb, Deliveries *dev){  //Modificar
     int position, i, j = 0, option;
     char n[NAME], date[DATE];
+    float costLoc = 0.0;
 
-    if((localizarLSOBB(*lsobb, (*dev).code, &position)) == 1){
+    if((localizarLSOBB(*lsobb, (*dev).code, &position, &costLoc)) == 1){
        
         (*dev) = lsobb->deliveriesListBB[position];
 

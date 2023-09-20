@@ -15,7 +15,7 @@ void loadList(list *, Deliveries *, int *, StructCost *);  //Cargar elementos
 void preload(list *, int *, StructCost *);    //Realizar precarga de datos por archivo
 void delete(list *, int *, StructCost *);    //Eliminar elementos
 void changeList(list *);    //Modificar elementos
-void information(list );     //Mostrar informacion de un elemento
+void information(list , StructCost *);     //Mostrar informacion de un elemento
 
 
 //Funciones del menu LSOBB
@@ -23,15 +23,15 @@ void loadListBB(listBB *, Deliveries *, int *, StructCost *);  //Cargar elemento
 void preloadListBB(listBB *, int *, StructCost *);    //Realizar precarga de datos por archivo
 void deleteListBB(listBB *, int *, StructCost *);    //Eliminar elementos
 void changeListBB(listBB *);    //Modificar elementos
-void informationListBB(listBB );     //Mostrar informacion de un elemento
+void informationListBB(listBB , StructCost *);     //Mostrar informacion de un elemento
 
 
 //Funciones del menu ABB
-void loadABB(abb *, Deliveries *);
-void deleteABB(abb *);
+void loadABB(abb *, Deliveries *, StructCost *);
+void deleteABB(abb *, StructCost *);
 void changeABB(abb *);
-void informationABB(abb );
-void preloadABB(abb *);
+void informationABB(abb , StructCost *);
+void preloadABB(abb *, StructCost *);
 
 
 //Funciones internas
@@ -69,10 +69,11 @@ int main(){
         printf("\n|         3. Menu de opciones ABB           |");
         printf("\n|         4. Comparar estructuras           |");
         printf("\n|         5. Mostrar estructuras            |");
-        printf("\n|         6. Salir del sistema              |");
+        printf("\n|         6. Mostrar costos cargados        |");
+        printf("\n|         7. Salir del sistema              |");
         printf("\n|===========================================|\n\n");
         scanf("%d", &menu);
-    }while(menu < 1 || menu > 6);
+    }while(menu < 1 || menu > 7);
     
     switch(menu){
         case 1: do{ 
@@ -131,7 +132,7 @@ int main(){
                                     printf("\n|-------------------------------------------------|\n");
                                 }
                                 else{
-                                    information(lso);
+                                    information(lso, &c);
                                 }
                                 break;
 
@@ -198,7 +199,7 @@ int main(){
                                     printf("\n|-------------------------------------------------|\n");
                                 }
                                 else{
-                                    informationListBB(lsobb);
+                                    informationListBB(lsobb, &c);
                                 }
                                 break;
 
@@ -235,7 +236,7 @@ int main(){
                     }
 
                     switch(opcion){
-                        case 1: loadABB(&abbTree, &dev);
+                        case 1: loadABB(&abbTree, &dev, &c);
                                 break;
 
                         case 2: if(getCantABB(abbTree) == 0){
@@ -244,7 +245,7 @@ int main(){
                                     printf("\n|----------------------------------------------|");
                                 }
                                 else{
-                                    deleteABB(&abbTree);
+                                    deleteABB(&abbTree, &c);
                                 }
                                 break;
 
@@ -264,11 +265,11 @@ int main(){
                                     printf("\n|---------------------------------------------|");
                                 }
                                 else{
-                                    informationABB(abbTree);
+                                    informationABB(abbTree, &c);
                                 }
                                 break;
 
-                        case 5: preloadABB(&abbTree);
+                        case 5: preloadABB(&abbTree, &c);
                                 break;
                     }
 
@@ -281,8 +282,11 @@ int main(){
 
         case 5: mostrarEstructuras(abbTree, lso, lsobb, cant, cantBB);
                 break;
+
+        case 6: mostrarCostos(c);
+                break;
     }
- }while(menu != 6);
+ }while(menu != 7);
 
  
  printf("\n|===========================================|");
@@ -363,6 +367,58 @@ void mostrarEstructuras(abb abbTree, list lso, listBB lsobb, int cant, int cantB
 
 void compararEstructuras(abb abbTree, list lso, listBB lsobb, StructCost c, int cant, int cantBB){
 
+}
+
+
+void mostrarCostos(StructCost c){
+
+    printf("\n|------------------------------------------------------|");
+    printf("\n|          Mostrando Costos de las Estructuras         |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|              Lista Secuencial Ordenada               |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|    Funcion    |    Costo Max     |     Costo Medio   |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|      Alta     |   %.2f                %.2f           ", c.lso.maxCostInsert, c.lso.medCostInsert);
+    printf("\n|------------------------------------------------------");
+    printf("\n|      Baja     |   %.2f                %.2f              ", c.lso.maxCostSupress, c.lso.medCostSupress);
+    printf("\n|------------------------------------------------------");
+    printf("\n| Evoc. Exitosa |   %.2f                %.2f              ", c.lso.maxCostSucEvo, c.lso.medCostSucEvo);
+    printf("\n|------------------------------------------------------");
+    printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.lso.maxCostFailEvo, c.lso.medCostFailEvo);
+    printf("\n|------------------------------------------------------|\n");
+
+    printf("\n|------------------------------------------------------|");
+    printf("\n|          Mostrando Costos de las Estructuras         |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|      Lista Secuencial Ordenada Busqueda Binaria      |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|    Funcion    |    Costo Max     |     Costo Medio   |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|      Alta     |   %.2f                %.2f            ", c.lsobb.maxCostInsert, c.lsobb.medCostInsert);
+    printf("\n|------------------------------------------------------");
+    printf("\n|      Baja     |   %.2f                %.2f              ", c.lsobb.maxCostSupress, c.lsobb.medCostSupress);
+    printf("\n|------------------------------------------------------");
+    printf("\n| Evoc. Exitosa |   %.2f                %.2f              ", c.lsobb.maxCostSucEvo, c.lsobb.medCostSucEvo);
+    printf("\n|------------------------------------------------------");
+    printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.lsobb.maxCostFailEvo, c.lsobb.medCostFailEvo);
+    printf("\n|------------------------------------------------------|\n");
+
+    printf("\n|------------------------------------------------------|");
+    printf("\n|          Mostrando Costos de las Estructuras         |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|              Arbol Binario de Busqueda               |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|    Funcion    |    Costo Max     |     Costo Medio   |");
+    printf("\n|------------------------------------------------------|");
+    printf("\n|      Alta     |   %.2f                %.2f              ", c.abb.maxCostInsert, c.abb.medCostInsert);
+    printf("\n|------------------------------------------------------");
+    printf("\n|      Baja     |   %.2f                %.2f              ", c.abb.maxCostSupress, c.abb.medCostSupress);
+    printf("\n|------------------------------------------------------");
+    printf("\n| Evoc. Exitosa |   %.2f                %.2f              ", c.abb.maxCostSucEvo, c.abb.medCostSucEvo);
+    printf("\n|------------------------------------------------------");
+    printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.abb.maxCostFailEvo, c.abb.medCostFailEvo);
+    printf("\n|------------------------------------------------------|\n\n\n");
 }
 
 
@@ -455,16 +511,18 @@ void lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree){
 }
 
 
+
 //Funciones del menu LSO
 void loadList(list *lso, Deliveries *dev, int *cant, StructCost *c){
 
     int highValue, enter;
+    float costo = 0.0;
 
     printf("\n|--------------------------------|");
     printf("\n|-------- Cargando Datos --------|");
     printf("\n|--------------------------------|\n\n");
     loadDeliveries(dev);
-    highValue = altaLSO(lso, *dev);
+    highValue = altaLSO(lso, *dev, &costo);
     switch(highValue){
         case 0: printf("|----------------------------------------------|\n");
                 printf("| Error al cargar elemento. No hay mas espacio |\n");
@@ -480,6 +538,12 @@ void loadList(list *lso, Deliveries *dev, int *cant, StructCost *c){
                 printf("|           Carga exitosa de datos             |\n");
                 printf("|----------------------------------------------|\n\n");
                 *cant = *cant + 1;
+                if(c->lso.maxCostInsert < costo){
+                    c->lso.maxCostInsert = costo;
+                }
+                c->lso.cantInsert += 1;
+                c->lso.costAcumInsert += costo;
+                c->lso.medCostInsert = (c->lso.costAcumInsert)/(c->lso.cantInsert);
                 break;
     }
 
@@ -488,7 +552,7 @@ void loadList(list *lso, Deliveries *dev, int *cant, StructCost *c){
         printf("\n|  Ingrese 1 para volver al menu  |");
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
-   }while(enter != 1);
+    }while(enter != 1);
 }
 
 
@@ -498,6 +562,7 @@ void preload(list *lso, int *cant, StructCost *c){
     char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
     long dni, dniS;
     int highValue, enter, i;
+    float costo = 0.0;
 
     FILE *preload;
     preload = fopen("Envios.txt", "r");
@@ -552,8 +617,7 @@ void preload(list *lso, int *cant, StructCost *c){
             }
             strcpy(&dev.dateReceived, dateR);
 
-            highValue = altaLSO(lso, dev);
-
+            highValue = altaLSO(lso, dev, &costo);
             switch(highValue){
                 case 0: printf("|----------------------------------------------|\n");
                         printf("| Error al cargar elemento. No hay mas espacio |\n");
@@ -570,6 +634,12 @@ void preload(list *lso, int *cant, StructCost *c){
                         printf("|            Carga exitosa de datos            |\n");
                         printf("|----------------------------------------------|\n\n");
                         *cant = *cant + 1;
+                        if(c->lso.maxCostInsert < costo){
+                            c->lso.maxCostInsert = costo;
+                        }
+                        c->lso.cantInsert += 1;
+                        c->lso.costAcumInsert += costo;
+                        c->lso.medCostInsert = (c->lso.costAcumInsert)/(c->lso.cantInsert);
                         break;
             }
         }
@@ -582,7 +652,7 @@ void preload(list *lso, int *cant, StructCost *c){
         printf("\n|  Ingrese 1 para volver al menu  |");
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
-   }while(enter != 1);
+    }while(enter != 1);
 }
 
 
@@ -591,6 +661,7 @@ void delete(list *lso, int *cant, StructCost *c){
     Deliveries dev;
     char code[CODE];
     int n, i = 0, j = 0, lowValue, evocationValue, enter;
+    float costo = 0.0;
 
     if(*cant < 1){
         printf("\n|------------------------------------------|");
@@ -616,7 +687,7 @@ void delete(list *lso, int *cant, StructCost *c){
             }
             strcpy(&dev.code, code);
 
-            lowValue = bajaLSO(lso, dev);
+            lowValue = bajaLSO(lso, dev, &costo);
             switch(lowValue){
                 case 0: printf("|-----------------------------------------------------|\n");
                         printf("|   Error al borrar elemento. No existe en la lista   |\n");
@@ -635,6 +706,12 @@ void delete(list *lso, int *cant, StructCost *c){
                         printf("|----------------------------------------------|\n\n");
                         j++;
                         *cant = *cant - 1;
+                        if(c->lso.maxCostSupress < costo){
+                            c->lso.maxCostSupress = costo;
+                        }
+                        c->lso.cantSupress += 1;
+                        c->lso.costAcumSupress += costo;
+                        c->lso.medCostSupress = (c->lso.costAcumSupress)/(c->lso.cantSupress);
                         break;
             }
         }while(j < n);
@@ -645,7 +722,7 @@ void delete(list *lso, int *cant, StructCost *c){
         printf("\n|  Ingrese 1 para volver al menu  |");
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
-   }while(enter != 1);
+    }while(enter != 1);
 }
 
 
@@ -684,11 +761,12 @@ void changeList(list *lso){
 }
 
 
-void information(list lso){
+void information(list lso, StructCost *c){
 
     Deliveries d;
     int i, evocationValue, enter;
     char code[CODE];
+    float costo = 0.0;
 
     printf("\n|----------------------------------------------------------------|");
     printf("\n|   Ingrese el codigo del envio que desea obtener informacion:   |");
@@ -699,7 +777,7 @@ void information(list lso){
     }
     strcpy(&d.code, code);
 
-    evocationValue = evocacionLSO(lso, &d);
+    evocationValue = evocacionLSO(lso, &d, &costo);
     if(evocationValue == 1){
         printf("\n|---------------------------------|");
         printf("\n    INFORMACION DEL ENVIO %s", code);
@@ -712,11 +790,23 @@ void information(list lso){
         printf("\n| Domicilio del envio: %s", d.address);
         printf("\n| Fecha de envio: %s", d.dateSender);
         printf("\n| Fecha de recepcion: %s", d.dateReceived);
+        if(c->lso.maxCostSucEvo < costo){
+            c->lso.maxCostSucEvo = costo;
+        }
+        c->lso.cantSucEvo += 1;
+        c->lso.costAcumSucEvo += costo;
+        c->lso.medCostSucEvo = (c->lso.costAcumSucEvo)/(c->lso.cantSucEvo);
     }
     else{
         printf("|--------------------------------------------------------------|\n");
         printf("    No se han encontrado coincidencias para el codigo %s\n", code);
         printf("|--------------------------------------------------------------|\n\n");
+        if(c->lso.maxCostFailEvo < costo){
+            c->lso.maxCostFailEvo = costo;
+        }
+        c->lso.cantFailEvo += 1;
+        c->lso.costAcumFailEvo += costo;
+        c->lso.medCostFailEvo = (c->lso.costAcumFailEvo)/(c->lso.cantFailEvo);
     }
 
     do{
@@ -733,12 +823,13 @@ void information(list lso){
 void loadListBB(listBB *lsobb, Deliveries *dev, int *cantBB, StructCost *c){
 
     int highValue, enter;
+    float costo = 0.0;
 
     printf("\n|--------------------------------|");
     printf("\n|-------- Cargando Datos --------|");
     printf("\n|--------------------------------|\n\n");
     loadDeliveries(dev);
-    highValue = altaLSOBB(lsobb, *dev);
+    highValue = altaLSOBB(lsobb, *dev, &costo);
     switch(highValue){
         case 0: printf("|----------------------------------------------|\n");
                 printf("| Error al cargar elemento. No hay mas espacio |\n");
@@ -754,6 +845,12 @@ void loadListBB(listBB *lsobb, Deliveries *dev, int *cantBB, StructCost *c){
                 printf("|           Carga exitosa de datos             |\n");
                 printf("|----------------------------------------------|\n\n");
                 *cantBB = *cantBB + 1;
+                if(c->lsobb.maxCostInsert < costo){
+                    c->lsobb.maxCostInsert = costo;
+                }
+                c->lsobb.cantInsert += 1;
+                c->lsobb.costAcumInsert += costo;
+                c->lsobb.medCostInsert = (c->lsobb.costAcumInsert)/(c->lsobb.cantInsert);
                 break;
     }
 
@@ -772,6 +869,7 @@ void preloadListBB(listBB *lsobb, int *cantBB, StructCost *c){
     char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
     long dni, dniS;
     int highValue, enter, i;
+    float costo = 0.0;
 
     FILE *preload;
     preload = fopen("Envios.txt", "r");
@@ -826,7 +924,7 @@ void preloadListBB(listBB *lsobb, int *cantBB, StructCost *c){
             }
             strcpy(&dev.dateReceived, dateR);
 
-            highValue = altaLSOBB(lsobb, dev);
+            highValue = altaLSOBB(lsobb, dev, &costo);
 
             switch(highValue){
                 case 0: printf("|----------------------------------------------|\n");
@@ -844,6 +942,12 @@ void preloadListBB(listBB *lsobb, int *cantBB, StructCost *c){
                         printf("|            Carga exitosa de datos            |\n");
                         printf("|----------------------------------------------|\n\n");
                         *cantBB = *cantBB + 1;
+                        if(c->lsobb.maxCostInsert < costo){
+                            c->lsobb.maxCostInsert = costo;
+                        }
+                        c->lsobb.cantInsert += 1;
+                        c->lsobb.costAcumInsert += costo;
+                        c->lsobb.medCostInsert = (c->lsobb.costAcumInsert)/(c->lsobb.cantInsert);
                         break;
             }
         }
@@ -865,6 +969,7 @@ void deleteListBB(listBB *lsobb, int *cantBB, StructCost *c){
     Deliveries dev;
     char code[CODE];
     int n, i = 0, j = 0, lowValue, enter;
+    float costo = 0.0;
 
     if(*cantBB < 1){
         printf("\n|------------------------------------------|");
@@ -890,7 +995,7 @@ void deleteListBB(listBB *lsobb, int *cantBB, StructCost *c){
             }
             strcpy(&dev.code, code);
 
-            lowValue = bajaLSOBB(lsobb, dev);
+            lowValue = bajaLSOBB(lsobb, dev, &costo);
             switch(lowValue){
                 case 0: printf("|-----------------------------------------------------|\n");
                         printf("|   Error al borrar elemento. No existe en la lista   |\n");
@@ -909,6 +1014,12 @@ void deleteListBB(listBB *lsobb, int *cantBB, StructCost *c){
                         printf("|----------------------------------------------|\n\n");
                         j++;
                         *cantBB = *cantBB - 1;
+                        if(c->lsobb.maxCostSupress < costo){
+                            c->lsobb.maxCostSupress = costo;
+                        }
+                        c->lsobb.cantSupress += 1;
+                        c->lsobb.costAcumSupress += costo;
+                        c->lsobb.medCostSupress = (c->lsobb.costAcumSupress)/(c->lsobb.cantSupress);
                         break;
             }
         }while(j < n);
@@ -919,7 +1030,7 @@ void deleteListBB(listBB *lsobb, int *cantBB, StructCost *c){
         printf("\n|  Ingrese 1 para volver al menu  |");
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
-   }while(enter != 1);
+    }while(enter != 1);
 }
 
 
@@ -958,11 +1069,12 @@ void changeListBB(listBB *lsobb){
 }
 
 
-void informationListBB(listBB lsobb){
+void informationListBB(listBB lsobb, StructCost *c){
 
     Deliveries d;
     int i, evocationValue, enter;
     char code[CODE];
+    float costo = 0.0;
 
     printf("\n|----------------------------------------------------------------|");
     printf("\n|   Ingrese el codigo del envio que desea obtener informacion:   |");
@@ -973,7 +1085,7 @@ void informationListBB(listBB lsobb){
     }
     strcpy(&d.code, code);
 
-    evocationValue = evocacionLSOBB(lsobb, &d);
+    evocationValue = evocacionLSOBB(lsobb, &d, &costo);
     if(evocationValue == 1){
         printf("\n|---------------------------------|");
         printf("\n    INFORMACION DEL ENVIO %s", code);
@@ -986,11 +1098,23 @@ void informationListBB(listBB lsobb){
         printf("\n| Domicilio del envio: %s", d.address);
         printf("\n| Fecha de envio: %s", d.dateSender);
         printf("\n| Fecha de recepcion: %s", d.dateReceived);
+        if(c->lsobb.maxCostSucEvo < costo){
+            c->lso.maxCostSucEvo = costo;
+        }
+        c->lsobb.cantSucEvo += 1;
+        c->lsobb.costAcumSucEvo += costo;
+        c->lsobb.medCostSucEvo = (c->lsobb.costAcumSucEvo)/(c->lsobb.cantSucEvo);
     }
     else{
         printf("|--------------------------------------------------------------|\n");
         printf("    No se han encontrado coincidencias para el codigo %s\n", code);
         printf("|--------------------------------------------------------------|\n\n");
+        if(c->lsobb.maxCostFailEvo < costo){
+            c->lsobb.maxCostFailEvo = costo;
+        }
+        c->lsobb.cantFailEvo += 1;
+        c->lsobb.costAcumFailEvo += costo;
+        c->lsobb.medCostFailEvo = (c->lsobb.costAcumFailEvo)/(c->lsobb.cantFailEvo);    
     }
 
     do{
@@ -1005,14 +1129,15 @@ void informationListBB(listBB lsobb){
 
 
 //Funciones del menu ABB
-void loadABB(abb *abbTree, Deliveries *dev){
+void loadABB(abb *abbTree, Deliveries *dev, StructCost *c){
 
     int highValue, enter;
+    float costo = 0.0;
     printf("\n|--------------------------------|");
     printf("\n|-------- Cargando Datos --------|");
     printf("\n|--------------------------------|\n\n");
     loadDeliveries(dev);
-    highValue = altaABB(abbTree, *dev);
+    highValue = altaABB(abbTree, *dev, &costo);
     switch(highValue){
         case 0: printf("|----------------------------------------------|\n");
                 printf("| Error al cargar elemento. No hay mas espacio |\n");
@@ -1027,6 +1152,12 @@ void loadABB(abb *abbTree, Deliveries *dev){
         case 2: printf("|----------------------------------------------|\n");
                 printf("|           Carga exitosa de datos             |\n");
                 printf("|----------------------------------------------|\n\n");
+                if(c->abb.maxCostInsert < costo){
+                    c->abb.maxCostInsert = costo;
+                }
+                c->abb.cantInsert += 1;
+                c->abb.costAcumInsert += costo;
+                c->abb.medCostInsert = (c->abb.costAcumInsert)/(c->abb.cantInsert);
                 break;
     }
 
@@ -1039,12 +1170,13 @@ void loadABB(abb *abbTree, Deliveries *dev){
 }
 
 
-void preloadABB(abb *abbTree){
+void preloadABB(abb *abbTree, StructCost *c){
 
     Deliveries dev;
     char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
     long dni, dniS;
     int highValue, enter, i;
+    float costo = 0.0;
 
     FILE *preload;
     preload = fopen("Envios.txt", "r");
@@ -1099,7 +1231,7 @@ void preloadABB(abb *abbTree){
             }
             strcpy(&dev.dateReceived, dateR);
 
-            highValue = altaABB(abbTree, dev);
+            highValue = altaABB(abbTree, dev, &costo);
 
             switch(highValue){
                 case 0: printf("|----------------------------------------------|\n");
@@ -1116,6 +1248,12 @@ void preloadABB(abb *abbTree){
                 case 2: printf("|----------------------------------------------|\n");
                         printf("|            Carga exitosa de datos            |\n");
                         printf("|----------------------------------------------|\n\n");
+                        if(c->abb.maxCostInsert < costo){
+                            c->abb.maxCostInsert = costo;
+                        }
+                        c->abb.cantInsert += 1;
+                        c->abb.costAcumInsert += costo;
+                        c->abb.medCostInsert = (c->abb.costAcumInsert)/(c->abb.cantInsert);
                         break;
             }
         }
@@ -1128,15 +1266,16 @@ void preloadABB(abb *abbTree){
         printf("\n|  Ingrese 1 para volver al menu  |");
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
-   }while(enter != 1);
+    }while(enter != 1);
 }
 
 
-void deleteABB(abb *abbTree){
+void deleteABB(abb *abbTree, StructCost *c){
 
     Deliveries dev;
     char code[CODE];
     int lowValue, n, i, j = 0, enter;
+    float costo = 0.0;
 
     do{
         printf("|---------------------------------------------------|\n");
@@ -1156,7 +1295,7 @@ void deleteABB(abb *abbTree){
         }
         strcpy(&dev.code, code);
 
-        lowValue = bajaABB(abbTree, &dev);
+        lowValue = bajaABB(abbTree, &dev, &costo);
         switch(lowValue){
             case 0: printf("|-----------------------------------------------------|\n");
                     printf("|   Error al borrar elemento. No existe en el arbol   |\n");
@@ -1174,6 +1313,12 @@ void deleteABB(abb *abbTree){
                     printf("|            Baja exitosa de datos             |\n");
                     printf("|----------------------------------------------|\n\n");
                     j++;
+                    if(c->abb.maxCostSupress < costo){
+                        c->abb.maxCostSupress = costo;
+                    }
+                    c->abb.cantSupress += 1;
+                    c->abb.costAcumSupress += costo;
+                    c->abb.medCostSupress = (c->abb.costAcumSupress)/(c->abb.cantSupress);
                     break;
             }
     }while(j < n);
@@ -1183,7 +1328,7 @@ void deleteABB(abb *abbTree){
         printf("\n|  Ingrese 1 para volver al menu  |");
         printf("\n|---------------------------------|\n");
         scanf("%d", &enter);
-   }while(enter != 1);
+    }while(enter != 1);
 }
 
 
@@ -1222,10 +1367,11 @@ void changeABB(abb *abbTree){
 }
 
 
-void informationABB(abb abbTree){
+void informationABB(abb abbTree, StructCost *c){
     Deliveries d;
     int i, evocationValue, enter;
     char code[CODE];
+    float costo = 0.0;
 
     printf("\n|----------------------------------------------------------------|");
     printf("\n|   Ingrese el codigo del envio que desea obtener informacion:   |");
@@ -1236,7 +1382,7 @@ void informationABB(abb abbTree){
     }
     strcpy(&d.code, code);
 
-    evocationValue = evocacionABB(abbTree, &d);
+    evocationValue = evocacionABB(abbTree, &d, &costo);
     if(evocationValue == 1){
         printf("\n|---------------------------------|");
         printf("\n    INFORMACION DEL ENVIO %s", code);
@@ -1249,11 +1395,23 @@ void informationABB(abb abbTree){
         printf("\n| Domicilio del envio: %s", d.address);
         printf("\n| Fecha de envio: %s", d.dateSender);
         printf("\n| Fecha de recepcion: %s", d.dateReceived);
+        if(c->abb.maxCostSucEvo < costo){
+            c->abb.maxCostSucEvo = costo;
+        }
+        c->abb.cantSucEvo += 1;
+        c->abb.costAcumSucEvo += costo;
+        c->abb.medCostSucEvo = (c->abb.costAcumSucEvo)/(c->abb.cantSucEvo);
     }
     else{
         printf("|--------------------------------------------------------------|\n");
         printf("    No se han encontrado coincidencias para el codigo %s\n", code);
         printf("|--------------------------------------------------------------|\n\n");
+        if(c->abb.maxCostFailEvo < costo){
+            c->abb.maxCostFailEvo = costo;
+        }
+        c->abb.cantFailEvo += 1;
+        c->abb.costAcumFailEvo += costo;
+        c->abb.medCostFailEvo = (c->abb.costAcumFailEvo)/(c->abb.cantFailEvo);
     }
 
     do{
