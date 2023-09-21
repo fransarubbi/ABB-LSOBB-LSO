@@ -118,7 +118,7 @@ return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 */
-int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo){      //Baja
+int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo, int confirm){      //Baja
     int position, ok;
     float costLoc = 0.0;
     float cost = 0.0;
@@ -127,42 +127,61 @@ int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo){      //Baja
         return 0;   //No podemos dar de baja porque no existe el elemento
     }
     else{
-        do{
-            printf("\n===========================================================");
-            printf("\n            Esta por eliminar datos. Estos son:         ");
-            printf("\n===========================================================\n");
-            printf("\n| Codigo: %s", lsobb->deliveriesListBB[position].code);
-            printf("\n| Dni receptor: %ld", lsobb->deliveriesListBB[position].doc);
-            printf("\n| Dni remitente: %ld", lsobb->deliveriesListBB[position].docSender);
-            printf("\n| Nombre y apellido del receptor: %s", lsobb->deliveriesListBB[position].name);
-            printf("\n| Nombre y apellido del remitente: %s", lsobb->deliveriesListBB[position].nameSender);
-            printf("\n| Domicilio del envio: %s", lsobb->deliveriesListBB[position].address);
-            printf("\n| Fecha de envio: %s", lsobb->deliveriesListBB[position].dateSender);
-            printf("\n| Fecha de recepcion: %s", lsobb->deliveriesListBB[position].dateReceived);
-            printf("\n===========================================================");
-            printf("\n                    ¿Esta de acuerdo?                    ");
-            printf("\n             0.No                        1.Si            ");
-            printf("\n===========================================================\n");
-            scanf("%d", &ok);
-        }while(ok < 0 || ok > 1);
-
-        if(ok == 1){
-            if(position == lsobb->last){
-                lsobb->last = lsobb->last - 1;
-            }
-            else{
-                while(position < lsobb->last){
-                    lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
-                    position = position + 1;
-                    cost += 1.5;
+        if(confirm == 1){
+            if(ok == 1){
+                if(position == lsobb->last){
+                    lsobb->last = lsobb->last - 1;
                 }
-                lsobb->last = lsobb->last - 1;
-                *costo = cost;
+                else{
+                    while(position < lsobb->last){
+                        lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
+                        position = position + 1;
+                        cost += 1.5;
+                    }
+                    lsobb->last = lsobb->last - 1;
+                    *costo = cost;
+                }
+                return 2;  //Baja exitosa
             }
-            return 2;  //Baja exitosa
         }
         else{
-            return 1;
+            do{
+                printf("\n===========================================================");
+                printf("\n            Esta por eliminar datos. Estos son:         ");
+                printf("\n===========================================================\n");
+                printf("\n| Codigo: %s", lsobb->deliveriesListBB[position].code);
+                printf("\n| Dni receptor: %ld", lsobb->deliveriesListBB[position].doc);
+                printf("\n| Dni remitente: %ld", lsobb->deliveriesListBB[position].docSender);
+                printf("\n| Nombre y apellido del receptor: %s", lsobb->deliveriesListBB[position].name);
+                printf("\n| Nombre y apellido del remitente: %s", lsobb->deliveriesListBB[position].nameSender);
+                printf("\n| Domicilio del envio: %s", lsobb->deliveriesListBB[position].address);
+                printf("\n| Fecha de envio: %s", lsobb->deliveriesListBB[position].dateSender);
+                printf("\n| Fecha de recepcion: %s", lsobb->deliveriesListBB[position].dateReceived);
+                printf("\n===========================================================");
+                printf("\n                    ¿Esta de acuerdo?                    ");
+                printf("\n             0.No                        1.Si            ");
+                printf("\n===========================================================\n");
+                scanf("%d", &ok);
+            }while(ok < 0 || ok > 1);
+
+            if(ok == 1){
+                if(position == lsobb->last){
+                    lsobb->last = lsobb->last - 1;
+                }
+                else{
+                    while(position < lsobb->last){
+                        lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
+                        position = position + 1;
+                        cost += 1.5;
+                    }
+                    lsobb->last = lsobb->last - 1;
+                    *costo = cost;
+                }
+                return 2;  //Baja exitosa
+            }
+            else{
+                return 1;
+            }
         }
     }
 }

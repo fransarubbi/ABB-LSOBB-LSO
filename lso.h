@@ -94,7 +94,7 @@ return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 */
-int bajaLSO(list *lso, Deliveries dev, float *costo){      //Baja
+int bajaLSO(list *lso, Deliveries dev, float *costo, int confirm){      //Baja
     int position, ok;
     float costLoc = 0.0;
     float cost = 0.0;
@@ -103,26 +103,7 @@ int bajaLSO(list *lso, Deliveries dev, float *costo){      //Baja
         return 0;   //No podemos dar de baja porque no existe el elemento
     }
     else{
-        do{
-            printf("\n===========================================================");
-            printf("\n            Esta por eliminar datos. Estos son:         ");
-            printf("\n===========================================================\n");
-            printf("\n| Codigo: %s", lso->deliveriesList[position].code);
-            printf("\n| Dni receptor: %ld", lso->deliveriesList[position].doc);
-            printf("\n| Dni remitente: %ld", lso->deliveriesList[position].docSender);
-            printf("\n| Nombre y apellido del receptor: %s", lso->deliveriesList[position].name);
-            printf("\n| Nombre y apellido del remitente: %s", lso->deliveriesList[position].nameSender);
-            printf("\n| Domicilio del envio: %s", lso->deliveriesList[position].address);
-            printf("\n| Fecha de envio: %s", lso->deliveriesList[position].dateSender);
-            printf("\n| Fecha de recepcion: %s", lso->deliveriesList[position].dateReceived);
-            printf("\n===========================================================");
-            printf("\n                    ¿Esta de acuerdo?                    ");
-            printf("\n             0.No                        1.Si            ");
-            printf("\n===========================================================\n");
-            scanf("%d", &ok);
-        }while(ok < 0 || ok > 1);
-
-        if(ok == 1){
+        if(confirm == 1){
             if(position == lso->last){
                 lso->last = lso->last - 1;
             }
@@ -138,7 +119,43 @@ int bajaLSO(list *lso, Deliveries dev, float *costo){      //Baja
             return 2;  //Baja exitosa
         }
         else{
-            return 1;
+            do{
+                printf("\n===========================================================");
+                printf("\n            Esta por eliminar datos. Estos son:         ");
+                printf("\n===========================================================\n");
+                printf("\n| Codigo: %s", lso->deliveriesList[position].code);
+                printf("\n| Dni receptor: %ld", lso->deliveriesList[position].doc);
+                printf("\n| Dni remitente: %ld", lso->deliveriesList[position].docSender);
+                printf("\n| Nombre y apellido del receptor: %s", lso->deliveriesList[position].name);
+                printf("\n| Nombre y apellido del remitente: %s", lso->deliveriesList[position].nameSender);
+                printf("\n| Domicilio del envio: %s", lso->deliveriesList[position].address);
+                printf("\n| Fecha de envio: %s", lso->deliveriesList[position].dateSender);
+                printf("\n| Fecha de recepcion: %s", lso->deliveriesList[position].dateReceived);
+                printf("\n===========================================================");
+                printf("\n                    ¿Esta de acuerdo?                    ");
+                printf("\n             0.No                        1.Si            ");
+                printf("\n===========================================================\n");
+                scanf("%d", &ok);
+            }while(ok < 0 || ok > 1);
+
+            if(ok == 1){
+                if(position == lso->last){
+                    lso->last = lso->last - 1;
+                }
+                else{
+                    while(position < lso->last){
+                        lso->deliveriesList[position] = lso->deliveriesList[position + 1];
+                        position = position + 1;
+                        cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
+                    }
+                    lso->last = lso->last - 1;
+                    *costo = cost;
+                }
+                return 2;  //Baja exitosa
+            }
+            else{
+                return 1;
+            }
         }
     }
 }
