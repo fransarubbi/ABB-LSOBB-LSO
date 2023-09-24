@@ -114,6 +114,7 @@ int altaABB(abb *abbTree, Deliveries dev, float *costo){
                 abbTree->root = nodo;   //Asignar el nodo auxiliar a la raiz del arbol
                 abbTree->cant = abbTree->cant + 1;  //Sumar 1 a la cantidad de nodos del arbol
                 cost += 0.5;
+                *costo = cost;
                 return 2;  //Exito
             }
             else{
@@ -127,9 +128,9 @@ int altaABB(abb *abbTree, Deliveries dev, float *costo){
                     abbTree->cant = abbTree->cant + 1;  //Sumar 1 a la cantidad de nodos del arbol
                     cost += 0.5;
                 }
+                *costo = cost;
                 return 2;  //Exito
             }
-            *costo = cost;
         }
         else{
             free((void*)nodo);
@@ -149,7 +150,6 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
     float costLoc = 0.0;
     float cost = 0.0;
     int ok;
-    Node *aux1, *aux2;
 
     if(localizarABB(abbTree, c, &costLoc) == 1){
 
@@ -161,6 +161,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                     abbTree->root = NULL;  //Colocar raiz en NULL (arbol vacio)
                     abbTree->cant = abbTree->cant - 1;
                     cost += 0.5;
+                    *costo = cost;
                     return 2;   //Exito
                 }
                 else{
@@ -169,6 +170,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                         free((void*)(abbTree->cursor));
                         abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
                         cost += 0.5;
+                        *costo = cost;
                         return 2;                                     //Exito
                     }
                     else{                                             //Cursor en el hijo derecho de un nodo
@@ -176,6 +178,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                         free((void*)(abbTree->cursor));               
                         abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
                         cost += 0.5;
+                        *costo = cost;
                         return 2;                                     //Exito
                     }
                 }
@@ -189,6 +192,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                     free((void*)(abbTree->cursor));
                     abbTree->cant = abbTree->cant - 1;               //Decrementar cantidad
                     cost += 0.5;
+                    *costo = cost;
                     return 2;                                        //Exito
                 }
                 else{
@@ -197,6 +201,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                         free((void*)(abbTree->cursor));
                         abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
                         cost += 0.5;
+                        *costo = cost;
                         return 2;                                   //Exito
                     }
                     else{                                           //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
@@ -204,6 +209,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                         free((void*)(abbTree->cursor));                         
                         abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
                         cost += 0.5;
+                        *costo = cost;
                         return 2;                                   //Exito
                     }
                 }
@@ -301,6 +307,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                         abbTree->root = NULL;  //Colocar raiz en NULL (arbol vacio)
                         abbTree->cant = abbTree->cant - 1;
                         cost += 0.5;
+                        *costo = cost;
                         return 2;   //Exito
                     }
                     else{
@@ -309,6 +316,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                             free((void*)(abbTree->cursor));
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
                             cost += 0.5;
+                            *costo = cost;
                             return 2;                                     //Exito
                         }
                         else{                                             //Cursor en el hijo derecho de un nodo
@@ -316,6 +324,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                             free((void*)(abbTree->cursor));               
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
                             cost += 0.5;
+                            *costo = cost;
                             return 2;                                     //Exito
                         }
                     }
@@ -329,6 +338,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                         free((void*)(abbTree->cursor));
                         abbTree->cant = abbTree->cant - 1;               //Decrementar cantidad
                         cost += 0.5;
+                        *costo = cost;
                         return 2;                                        //Exito
                     }
                     else{
@@ -337,6 +347,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                             free((void*)(abbTree->cursor));
                             abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
                             cost += 0.5;
+                            *costo = cost;
                             return 2;                                   //Exito
                         }
                         else{                                           //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
@@ -344,6 +355,7 @@ int bajaABB(abb *abbTree, char c[], float *costo, int confirm){
                             free((void*)(abbTree->cursor));                         
                             abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
                             cost += 0.5;
+                            *costo = cost;
                             return 2;                                   //Exito
                         }
                     }
@@ -430,8 +442,7 @@ return 0 - Fracaso por no existir coincidencias
 return 1 - Exito
 */
 int evocacionABB(abb abbTree, Deliveries *dev, float *costo){
-
-float costLoc = 0.0;
+    float costLoc = 0.0;
 
     if(localizarABB(&abbTree, dev->code, &costLoc) == 0){
         *costo = costLoc;

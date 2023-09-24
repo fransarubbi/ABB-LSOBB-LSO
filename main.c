@@ -277,6 +277,7 @@ int main(){
                 break;
 
         case 4: resetAll(&lso, &lsobb, &abbTree, &cant, &cantBB);
+                initStructCost(&c);
                 lect = lecturaOperaciones(&c, &lso, &lsobb, &abbTree, &cant, &cantBB);
                 if(lect == 1){
                     mostrarCostos(c);
@@ -377,6 +378,7 @@ void mostrarCostos(StructCost c){
 
     printf("\n|------------------------------------------------------|");
     printf("\n|          Mostrando Costos de las Estructuras         |");
+    printf("\n|------------------------------------------------------|\n\n");
     printf("\n|------------------------------------------------------|");
     printf("\n|              Lista Secuencial Ordenada               |");
     printf("\n|------------------------------------------------------|");
@@ -392,8 +394,6 @@ void mostrarCostos(StructCost c){
     printf("\n|------------------------------------------------------|\n");
 
     printf("\n|------------------------------------------------------|");
-    printf("\n|          Mostrando Costos de las Estructuras         |");
-    printf("\n|------------------------------------------------------|");
     printf("\n|      Lista Secuencial Ordenada Busqueda Binaria      |");
     printf("\n|------------------------------------------------------|");
     printf("\n|    Funcion    |    Costo Max     |     Costo Medio   |");
@@ -407,8 +407,6 @@ void mostrarCostos(StructCost c){
     printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.lsobb.maxCostFailEvo, c.lsobb.medCostFailEvo);
     printf("\n|------------------------------------------------------|\n");
 
-    printf("\n|------------------------------------------------------|");
-    printf("\n|          Mostrando Costos de las Estructuras         |");
     printf("\n|------------------------------------------------------|");
     printf("\n|              Arbol Binario de Busqueda               |");
     printf("\n|------------------------------------------------------|");
@@ -515,7 +513,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
     char code[CODE], name[NAME], nameSender[NAME], addres[NAME], dateS[DATE], dateR[DATE];
     long dni, dniS;
     int value, enter, i, codeOperator, baja = 1;
-    float costo = 0.0;
+    float costo;
 
     FILE *preload;
     preload = fopen("Operaciones-Envios.txt", "r");
@@ -581,6 +579,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                 printf("|----------------------------------------------|\n\n");
                             }
                             else{
+                                costo = 0.0;
                                 value = altaLSO(lso, dev, &costo);
                                 switch(value){
                                     case 1: printf("|-------------------------------------------------|\n");
@@ -599,7 +598,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                             c->lso.costAcumInsert += costo;
                                             c->lso.medCostInsert = (c->lso.costAcumInsert)/(c->lso.cantInsert);
                                             break;
-                                    }
+                                }
                             }
                             if(*cantBB == SIZE){
                                 printf("|----------------------------------------------|\n");
@@ -607,6 +606,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                 printf("|----------------------------------------------|\n\n");
                             }
                             else{
+                                costo = 0.0;
                                 value = altaLSOBB(lsobb, dev, &costo);
                                 switch(value){
                                     case 1: printf("|-------------------------------------------------|\n");
@@ -625,7 +625,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                             c->lsobb.costAcumInsert += costo;
                                             c->lsobb.medCostInsert = (c->lsobb.costAcumInsert)/(c->lsobb.cantInsert);
                                             break;
-                                    }
+                                }
                             }
                             if(getCantABB(*abbTree) == SIZE){
                                 printf("|----------------------------------------------|\n");
@@ -633,6 +633,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                 printf("|----------------------------------------------|\n\n");
                             }
                             else{
+                                costo = 0.0;
                                 value = altaABB(abbTree, dev, &costo);
                                 switch(value){
                                     case 1: printf("|-------------------------------------------------|\n");
@@ -650,9 +651,10 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                             c->abb.costAcumInsert += costo;
                                             c->abb.medCostInsert = (c->abb.costAcumInsert)/(c->abb.cantInsert);
                                             break;
-                                    }
+                                }
                             }
                             break;
+
 
                     case 2: if(*cant == 0){
                                 printf("|---------------------------------------|\n");
@@ -660,6 +662,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                 printf("|---------------------------------------|\n\n");
                             }
                             else{
+                                costo = 0.0;
                                 value = bajaLSO(lso, dev, &costo, baja);
                                 switch(value){
                                     case 0: printf("|-----------------------------------------------------|\n");
@@ -691,6 +694,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                 printf("|---------------------------------------|\n\n");
                             }
                             else{
+                                costo = 0.0;
                                 value = bajaLSOBB(lsobb, dev, &costo, baja);
                                 switch(value){
                                     case 0: printf("|-----------------------------------------------------|\n");
@@ -722,6 +726,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                 printf("|---------------------------------------|\n\n");
                             }
                             else{
+                                costo = 0.0;
                                 value = bajaABB(abbTree, dev.code, &costo, baja);
                                 switch(value){
                                     case 0: printf("|-----------------------------------------------------|\n");
@@ -757,6 +762,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                         printf("|---------------------------------------|\n\n");
                     }
                     else{
+                        costo = 0.0;
                         value = evocacionLSO(*lso, &dev, &costo);
                         switch(value){
                             case 1: printf("\n|---------------------------------|");
@@ -778,7 +784,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     c->lso.medCostSucEvo = (c->lso.costAcumSucEvo)/(c->lso.cantSucEvo);
                                     break;
 
-                            case 2: printf("|--------------------------------------------------------------|\n");
+                            case 0: printf("|--------------------------------------------------------------|\n");
                                     printf("    No se han encontrado coincidencias para el codigo %s\n", code);
                                     printf("|--------------------------------------------------------------|\n\n");
                                     if(c->lso.maxCostFailEvo < costo){
@@ -790,12 +796,14 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     break;
                         }
                     }
+
                     if(*cantBB == 0){
                         printf("|---------------------------------------|\n");
                         printf("| Error al evocar elemento. Lista vacia |\n");
                         printf("|---------------------------------------|\n\n");
                     }
                     else{
+                        costo = 0.0;
                         value = evocacionLSOBB(*lsobb, &dev, &costo);
                         switch(value){
                             case 1: printf("\n|---------------------------------|");
@@ -817,7 +825,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     c->lsobb.medCostSucEvo = (c->lsobb.costAcumSucEvo)/(c->lsobb.cantSucEvo);
                                     break;
 
-                            case 2: printf("|--------------------------------------------------------------|\n");
+                            case 0: printf("|--------------------------------------------------------------|\n");
                                     printf("    No se han encontrado coincidencias para el codigo %s\n", code);
                                     printf("|--------------------------------------------------------------|\n\n");
                                     if(c->lsobb.maxCostFailEvo < costo){
@@ -829,12 +837,14 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     break;
                         }
                     }
+                    
                     if(getCantABB(*abbTree) == 0){
                         printf("|---------------------------------------|\n");
                         printf("| Error al evocar elemento. Arbol vacio |\n");
                         printf("|---------------------------------------|\n\n");
                     }
                     else{
+                        costo = 0.0;
                         value = evocacionABB(*abbTree, &dev, &costo);
                         switch(value){
                             case 1: printf("\n|---------------------------------|");
@@ -856,7 +866,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     c->abb.medCostSucEvo = (c->abb.costAcumSucEvo)/(c->abb.cantSucEvo);
                                     break;
 
-                            case 2: printf("|--------------------------------------------------------------|\n");
+                            case 0: printf("|--------------------------------------------------------------|\n");
                                     printf("    No se han encontrado coincidencias para el codigo %s\n", code);
                                     printf("|--------------------------------------------------------------|\n\n");
                                     if(c->abb.maxCostFailEvo < costo){
