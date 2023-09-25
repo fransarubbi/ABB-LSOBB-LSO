@@ -686,6 +686,11 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                             c->lso.costAcumSupress += costo;
                                             c->lso.medCostSupress = (c->lso.costAcumSupress)/(c->lso.cantSupress);
                                             break; 
+
+                                    case 3: printf("\n|------------------------------------------|");
+                                            printf("\n| Error por no coincidir la nupla completa |");
+                                            printf("\n|------------------------------------------|");
+                                            break;
                                 }
                             }
                             if(*cantBB == 0){
@@ -717,6 +722,11 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                             c->lsobb.cantSupress += 1;
                                             c->lsobb.costAcumSupress += costo;
                                             c->lsobb.medCostSupress = (c->lsobb.costAcumSupress)/(c->lsobb.cantSupress);
+                                            break;
+
+                                    case 3: printf("\n|------------------------------------------|");
+                                            printf("\n| Error por no coincidir la nupla completa |");
+                                            printf("\n|------------------------------------------|");
                                             break; 
                                 }
                             }
@@ -727,7 +737,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                             }
                             else{
                                 costo = 0.0;
-                                value = bajaABB(abbTree, dev.code, &costo, baja);
+                                value = bajaABB(abbTree, dev, &costo, baja);
                                 switch(value){
                                     case 0: printf("|-----------------------------------------------------|\n");
                                             printf("|   Error al borrar elemento. No existe en el arbol   |\n");
@@ -749,6 +759,11 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                             c->abb.costAcumSupress += costo;
                                             c->abb.medCostSupress = (c->abb.costAcumSupress)/(c->abb.cantSupress);
                                             break; 
+                                    
+                                    case 3: printf("\n|------------------------------------------|");
+                                            printf("\n| Error por no coincidir la nupla completa |");
+                                            printf("\n|------------------------------------------|");
+                                            break;
                                 }
                             }
                             break;
@@ -1678,7 +1693,7 @@ void deleteABB(abb *abbTree, StructCost *c){
         }
         strcpy(&dev.code, code);
 
-        lowValue = bajaABB(abbTree, &dev, &costo, baja);
+        lowValue = bajaABB(abbTree, dev, &costo, baja);
         switch(lowValue){
             case 0: printf("|-----------------------------------------------------|\n");
                     printf("|   Error al borrar elemento. No existe en el arbol   |\n");

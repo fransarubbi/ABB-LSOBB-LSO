@@ -117,6 +117,7 @@ Codificacion de Baja:
 return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
+return 3 - Fracaso por coincidir en codigo, pero no la nupla completa
 */
 int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo, int confirm){      //Baja
     int position, ok;
@@ -128,7 +129,13 @@ int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo, int confirm){      //
     }
     else{
         if(confirm == 1){
-            if(ok == 1){
+            int a = strcmp((dev).code, lsobb->deliveriesListBB[position].code);
+            int b = strcmp((dev).name, lsobb->deliveriesListBB[position].name);
+            int c = strcmp((dev).nameSender, lsobb->deliveriesListBB[position].nameSender);
+            int d = strcmp((dev).address, lsobb->deliveriesListBB[position].address);
+            int e = strcmp((dev).dateSender, lsobb->deliveriesListBB[position].dateSender);
+            int f = strcmp((dev).dateReceived, lsobb->deliveriesListBB[position].dateReceived);
+            if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lsobb->deliveriesListBB[position].doc) && (dev.docSender == lsobb->deliveriesListBB[position].docSender)){
                 if(position == lsobb->last){
                     lsobb->last = lsobb->last - 1;
                 }
@@ -143,6 +150,10 @@ int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo, int confirm){      //
                 }
                 return 2;  //Baja exitosa
             }
+            else{
+                return 3;
+            }
+            
         }
         else{
             do{

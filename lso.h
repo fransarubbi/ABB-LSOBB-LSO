@@ -42,8 +42,13 @@ int localizarLSO(list lso, char c[], int *position, float *costo){   //Localizar
 
     *position = i;  
     *costo = cost;
-    if((strcmp(lso.deliveriesList[i].code, c) == 0) && (i <= lso.last)){  
-        return 1;
+    if(i <= lso.last){
+        if(strcmp(lso.deliveriesList[i].code, c) == 0){  
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
     else{
         return 0;
@@ -93,6 +98,7 @@ Codificacion de Baja:
 return 0 - Fracaso por elemento inexistente en lista
 return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
+return 3 - Fracaso por coincidir en codigo, pero no la nupla completa
 */
 int bajaLSO(list *lso, Deliveries dev, float *costo, int confirm){      //Baja
     int position, ok;
@@ -104,19 +110,30 @@ int bajaLSO(list *lso, Deliveries dev, float *costo, int confirm){      //Baja
     }
     else{
         if(confirm == 1){
-            if(position == lso->last){
-                lso->last = lso->last - 1;
+            int a = strcmp((dev).code, lso->deliveriesList[position].code);
+            int b = strcmp((dev).name, lso->deliveriesList[position].name);
+            int c = strcmp((dev).nameSender, lso->deliveriesList[position].nameSender);
+            int d = strcmp((dev).address, lso->deliveriesList[position].address);
+            int e = strcmp((dev).dateSender, lso->deliveriesList[position].dateSender);
+            int f = strcmp((dev).dateReceived, lso->deliveriesList[position].dateReceived);
+            if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lso->deliveriesList[position].doc) && (dev.docSender == lso->deliveriesList[position].docSender)){
+                if(position == lso->last){
+                    lso->last = lso->last - 1;
+                }
+                else{
+                    while(position < lso->last){
+                        lso->deliveriesList[position] = lso->deliveriesList[position + 1];
+                        position = position + 1;
+                        cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
+                    }
+                    lso->last = lso->last - 1;
+                    *costo = cost;
+                }
+                return 2;  //Baja exitosa
             }
             else{
-                while(position < lso->last){
-                    lso->deliveriesList[position] = lso->deliveriesList[position + 1];
-                    position = position + 1;
-                    cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
-                }
-                lso->last = lso->last - 1;
-                *costo = cost;
+                return 3; //Fracaso por no coincidir
             }
-            return 2;  //Baja exitosa
         }
         else{
             do{
