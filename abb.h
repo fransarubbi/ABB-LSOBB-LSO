@@ -155,38 +155,39 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
 
     if(localizarABB(abbTree, dev.code, &costLoc) == 1){
 
-        if(confirm == 1){
+        if(confirm == 1){           //Condicion para realizar la baja automatica en lectura de operaciones
             int a = strcmp((dev).code, abbTree->cursor->abbDev.code);
             int b = strcmp((dev).name, abbTree->cursor->abbDev.name);
             int c = strcmp((dev).nameSender, abbTree->cursor->abbDev.nameSender);
             int d = strcmp((dev).address, abbTree->cursor->abbDev.address);
             int e = strcmp((dev).dateSender, abbTree->cursor->abbDev.dateSender);
             int f = strcmp((dev).dateReceived, abbTree->cursor->abbDev.dateReceived);
+            //Toda la nupla debe coincidir con los datos leidos del archivo
             if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == abbTree->cursor->abbDev.doc) && (dev.docSender == abbTree->cursor->abbDev.docSender)){
                 //Case 1: eliminar nodo sin descendencia
                 if((abbTree->cursor->leftSon == NULL) && (abbTree->cursor->rightSon == NULL)){
                     if(abbTree->cursor == abbTree->root){  //Posible caso en que se elimina la raiz
-                        free((abbTree->cursor));
+                        free((void*)(abbTree->cursor));   //Liberar memoria
                         abbTree->root = NULL;  //Colocar raiz en NULL (arbol vacio)
-                        abbTree->cant = abbTree->cant - 1;
-                        cost += 0.5;
-                        *costo = cost;
+                        abbTree->cant = abbTree->cant - 1;   //Decrementar cantidad
+                        cost += 0.5;                        //Un solo corrimiento de punteros
+                        *costo = cost;                      
                         return 2;   //Exito
                     }
                     else{
                         if(abbTree->father->leftSon == abbTree->cursor){  //Eliminar nodo sin descendia que es hijo izquierdo de otro nodo
                             abbTree->father->leftSon = NULL;             //El hijo izquierdo del nodo padre, a NULL (hijo eliminado)
-                            free((abbTree->cursor));
+                            free((void*)(abbTree->cursor));             //Liberar memoria
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                  //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                     //Exito
                         }
                         else{                                             //Cursor en el hijo derecho de un nodo
                             abbTree->father->rightSon = NULL;             //Eliminar nodo sin descendia que es hijo derecho de otro nodo
-                            free((abbTree->cursor));               
+                            free((void*)(abbTree->cursor));               //Liberar memoria 
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                  //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                     //Exito
                         }
@@ -198,26 +199,26 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 if((abbTree->cursor->leftSon == NULL) && (abbTree->cursor->rightSon != NULL)){  
                     if(abbTree->cursor == abbTree->root){                //Posible caso en que se elimine la raiz
                         abbTree->root = abbTree->cursor->rightSon;       //A la raiz le damos su hijo derecho
-                        free((abbTree->cursor));
+                        free((void*)(abbTree->cursor));                  //Liberar memoria
                         abbTree->cant = abbTree->cant - 1;               //Decrementar cantidad
-                        cost += 0.5;
+                        cost += 0.5;                                     //Un solo corrimiento de punteros
                         *costo = cost;
                         return 2;                                        //Exito
                     }
                     else{
                         if(abbTree->father->leftSon == abbTree->cursor){   //Eliminar nodo (cursor) que es hijo izquierdo de otro (padre)
                             abbTree->father->leftSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
-                            free((abbTree->cursor));
+                            free((void*)(abbTree->cursor));              //Liberar memoria
                             abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                   //Exito
                         }
                         else{                                           //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
                             abbTree->father->rightSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
-                            free((abbTree->cursor));                         
+                            free((void*)(abbTree->cursor));              //Liberar memoria            
                             abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                   //Exito
                         }
@@ -227,24 +228,24 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                     if((abbTree->cursor->leftSon != NULL) && (abbTree->cursor->rightSon == NULL)){ 
                         if(abbTree->cursor == abbTree->root){            //Posible caso en que se elimine la raiz
                             abbTree->root = abbTree->cursor->leftSon;    //A la raiz le damos su hijo izquierdo
-                            free((abbTree->cursor));
+                            free((void*)(abbTree->cursor));               //Liberar memoria
                             abbTree->cant = abbTree->cant - 1;           //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                 //Un solo corrimiento de punteros
                             return 2;                                    //Exito
                         }
                         else{
                             if(abbTree->father->leftSon == abbTree->cursor){          //Eliminar nodo (cursor) que es hijo izquierdo de otro (padre)
                                 abbTree->father->leftSon = abbTree->cursor->leftSon;  //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
-                                free((abbTree->cursor));
+                                free((void*)(abbTree->cursor));                       //Liberar memoria
                                 abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
-                                cost += 0.5;
+                                cost += 0.5;                                          //Un solo corrimiento de punteros
                                 return 2;                                             //Exito
                             }
                             else{                                                     //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
                                 abbTree->father->rightSon = abbTree->cursor->leftSon; //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
-                                free((abbTree->cursor));
+                                free((void*)(abbTree->cursor));                       //Liberar memoria
                                 abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
-                                cost += 0.5;
+                                cost += 0.5;                                          //Un solo corrimiento de punteros
                                 return 2;                                             //Exito
                             }
                         }
@@ -255,34 +256,34 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 //Case 3: eliminar nodo con dos descendencias
                 if((abbTree->cursor->leftSon != NULL) && (abbTree->cursor->rightSon != NULL)){
                 
-                    auxCursor = abbTree->cursor->rightSon;
-                    auxFather = abbTree->cursor;
-                    cost += 1;
+                    auxCursor = abbTree->cursor->rightSon;     //Colocar el puntero a nodo auxCursor, en el hijo derecho del nodo donde esta cursor
+                    auxFather = abbTree->cursor;               //Colocar el puntero a nodo auxFather, en el nodo donde esta cursor
+                    cost += 1;                                 //Dos movimientos de punteros
 
-                    while(auxCursor->leftSon != NULL){
-                        auxFather = auxCursor;
-                        auxCursor = auxCursor->leftSon;
-                        cost += 1;
-                    }
+                    while(auxCursor->leftSon != NULL){         //Buscar el menor nodo de los mayores
+                        auxFather = auxCursor;                 //Colocar el puntero a nodo auxFather, donde esta auxCursor
+                        auxCursor = auxCursor->leftSon;        //Colocar el puntero a nodo auxCursor, en el hijo izquierdo del nodo actual
+                        cost += 1;                             //Dos movimientos de punteros
+                    }                                          //El auxFather esta encima (padre) del nodo donde esta cursor
 
-                    abbTree->cursor->abbDev = auxCursor->abbDev;
-                    cost += 1;
+                    abbTree->cursor->abbDev = auxCursor->abbDev;   //El cursor esta en el nodo a eliminar. Copiamos los datos del nodo menor de los mayores, en el nodo cursor
+                    cost += 1;                                     //Asignacion de informacion, costo 1
 
-                    if(auxFather->leftSon == auxCursor){
-                        auxFather->leftSon = auxCursor->rightSon;
+                    if(auxFather->leftSon == auxCursor){           //Si el hijo izquierdo del padre, es el nodo donde esta el auxCursor (caso general)
+                        auxFather->leftSon = auxCursor->rightSon;  //Colocar el hijo izquierdo del padre, en el hijo izquierdo del nodo de reemplazo
                     }
-                    else{
-                        auxFather->rightSon = auxCursor->rightSon;
+                    else{                                       //Caso en que se elimina la raiz (el nodo de reemplazo esta a la derecha de su padre)
+                        auxFather->rightSon = auxCursor->rightSon;    //Colocar el hijo derecho del padre, en el hijo derecho del nodo de reemplazo
                     }
-                    cost += 0.5;
+                    cost += 0.5;                            //Ambos casos son de un solo corrimientos de punteros, costo 0.5
                     *costo = cost;
-                    free(auxCursor);
-                    abbTree->cant = abbTree->cant - 1;
-                    return 2;
+                    free((void*)auxCursor);                     //Liberar memoria
+                    abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
+                    return 2;                                   //Exito
                 }
             }
             else{
-                return 3;
+                return 3;               //Fracaso por no coincidir toda la nupla
             }
         }
         else{
@@ -309,27 +310,27 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 //Case 1: eliminar nodo sin descendencia
                 if((abbTree->cursor->leftSon == NULL) && (abbTree->cursor->rightSon == NULL)){
                     if(abbTree->cursor == abbTree->root){  //Posible caso en que se elimina la raiz
-                        free((void*)(abbTree->cursor));
+                        free((void*)(abbTree->cursor));   //Liberar memoria
                         abbTree->root = NULL;  //Colocar raiz en NULL (arbol vacio)
-                        abbTree->cant = abbTree->cant - 1;
-                        cost += 0.5;
-                        *costo = cost;
+                        abbTree->cant = abbTree->cant - 1;   //Decrementar cantidad
+                        cost += 0.5;                        //Un solo corrimiento de punteros
+                        *costo = cost;                      
                         return 2;   //Exito
                     }
                     else{
                         if(abbTree->father->leftSon == abbTree->cursor){  //Eliminar nodo sin descendia que es hijo izquierdo de otro nodo
                             abbTree->father->leftSon = NULL;             //El hijo izquierdo del nodo padre, a NULL (hijo eliminado)
-                            free((void*)(abbTree->cursor));
+                            free((void*)(abbTree->cursor));             //Liberar memoria
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                  //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                     //Exito
                         }
                         else{                                             //Cursor en el hijo derecho de un nodo
                             abbTree->father->rightSon = NULL;             //Eliminar nodo sin descendia que es hijo derecho de otro nodo
-                            free((void*)(abbTree->cursor));               
+                            free((void*)(abbTree->cursor));               //Liberar memoria 
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                  //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                     //Exito
                         }
@@ -341,26 +342,26 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 if((abbTree->cursor->leftSon == NULL) && (abbTree->cursor->rightSon != NULL)){  
                     if(abbTree->cursor == abbTree->root){                //Posible caso en que se elimine la raiz
                         abbTree->root = abbTree->cursor->rightSon;       //A la raiz le damos su hijo derecho
-                        free((void*)(abbTree->cursor));
+                        free((void*)(abbTree->cursor));                  //Liberar memoria
                         abbTree->cant = abbTree->cant - 1;               //Decrementar cantidad
-                        cost += 0.5;
+                        cost += 0.5;                                     //Un solo corrimiento de punteros
                         *costo = cost;
                         return 2;                                        //Exito
                     }
                     else{
                         if(abbTree->father->leftSon == abbTree->cursor){   //Eliminar nodo (cursor) que es hijo izquierdo de otro (padre)
                             abbTree->father->leftSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
-                            free((void*)(abbTree->cursor));
+                            free((void*)(abbTree->cursor));              //Liberar memoria
                             abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                   //Exito
                         }
                         else{                                           //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
                             abbTree->father->rightSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
-                            free((void*)(abbTree->cursor));                         
+                            free((void*)(abbTree->cursor));              //Liberar memoria            
                             abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                //Un solo corrimiento de punteros
                             *costo = cost;
                             return 2;                                   //Exito
                         }
@@ -370,24 +371,24 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                     if((abbTree->cursor->leftSon != NULL) && (abbTree->cursor->rightSon == NULL)){ 
                         if(abbTree->cursor == abbTree->root){            //Posible caso en que se elimine la raiz
                             abbTree->root = abbTree->cursor->leftSon;    //A la raiz le damos su hijo izquierdo
-                            free((void*)(abbTree->cursor));
+                            free((void*)(abbTree->cursor));               //Liberar memoria
                             abbTree->cant = abbTree->cant - 1;           //Decrementar cantidad
-                            cost += 0.5;
+                            cost += 0.5;                                 //Un solo corrimiento de punteros
                             return 2;                                    //Exito
                         }
                         else{
                             if(abbTree->father->leftSon == abbTree->cursor){          //Eliminar nodo (cursor) que es hijo izquierdo de otro (padre)
                                 abbTree->father->leftSon = abbTree->cursor->leftSon;  //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
-                                free((void*)(abbTree->cursor));
+                                free((void*)(abbTree->cursor));                       //Liberar memoria
                                 abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
-                                cost += 0.5;
+                                cost += 0.5;                                          //Un solo corrimiento de punteros
                                 return 2;                                             //Exito
                             }
                             else{                                                     //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
                                 abbTree->father->rightSon = abbTree->cursor->leftSon; //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
-                                free((void*)(abbTree->cursor));
+                                free((void*)(abbTree->cursor));                       //Liberar memoria
                                 abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
-                                cost += 0.5;
+                                cost += 0.5;                                          //Un solo corrimiento de punteros
                                 return 2;                                             //Exito
                             }
                         }
@@ -398,30 +399,30 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 //Case 3: eliminar nodo con dos descendencias
                 if((abbTree->cursor->leftSon != NULL) && (abbTree->cursor->rightSon != NULL)){
                 
-                    auxCursor = abbTree->cursor->rightSon;
-                    auxFather = abbTree->cursor;
-                    cost += 1;
+                    auxCursor = abbTree->cursor->rightSon;     //Colocar el puntero a nodo auxCursor, en el hijo derecho del nodo donde esta cursor
+                    auxFather = abbTree->cursor;               //Colocar el puntero a nodo auxFather, en el nodo donde esta cursor
+                    cost += 1;                                 //Dos movimientos de punteros
 
-                    while(auxCursor->leftSon != NULL){
-                        auxFather = auxCursor;
-                        auxCursor = auxCursor->leftSon;
-                        cost += 1;
-                    }
+                    while(auxCursor->leftSon != NULL){         //Buscar el menor nodo de los mayores
+                        auxFather = auxCursor;                 //Colocar el puntero a nodo auxFather, donde esta auxCursor
+                        auxCursor = auxCursor->leftSon;        //Colocar el puntero a nodo auxCursor, en el hijo izquierdo del nodo actual
+                        cost += 1;                             //Dos movimientos de punteros
+                    }                                          //El auxFather esta encima (padre) del nodo donde esta cursor
 
-                    abbTree->cursor->abbDev = auxCursor->abbDev;
-                    cost += 1;
+                    abbTree->cursor->abbDev = auxCursor->abbDev;   //El cursor esta en el nodo a eliminar. Copiamos los datos del nodo menor de los mayores, en el nodo cursor
+                    cost += 1;                                     //Asignacion de informacion, costo 1
 
-                    if(auxFather->leftSon == auxCursor){
-                        auxFather->leftSon = auxCursor->rightSon;
+                    if(auxFather->leftSon == auxCursor){           //Si el hijo izquierdo del padre, es el nodo donde esta el auxCursor (caso general)
+                        auxFather->leftSon = auxCursor->rightSon;  //Colocar el hijo izquierdo del padre, en el hijo izquierdo del nodo de reemplazo
                     }
-                    else{
-                        auxFather->rightSon = auxCursor->rightSon;
+                    else{                                       //Caso en que se elimina la raiz (el nodo de reemplazo esta a la derecha de su padre)
+                        auxFather->rightSon = auxCursor->rightSon;    //Colocar el hijo derecho del padre, en el hijo derecho del nodo de reemplazo
                     }
-                    cost += 0.5;
+                    cost += 0.5;                            //Ambos casos son de un solo corrimientos de punteros, costo 0.5
                     *costo = cost;
-                    free(auxCursor);
-                    abbTree->cant = abbTree->cant - 1;
-                    return 2;
+                    free((void*)auxCursor);                     //Liberar memoria
+                    abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
+                    return 2;                                   //Exito
                 }
             }
             else{
@@ -584,6 +585,7 @@ int modificarABB(abb *abbTree, Deliveries *dev){
 }
 
 
+//Preorden recursivo
 void preordenABB(Node *nodo, int ok, int i){
 
     if((i%3) == 0 && (ok == 1)){  

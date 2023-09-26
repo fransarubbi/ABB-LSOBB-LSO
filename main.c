@@ -1,5 +1,29 @@
 //Grupo 7  Sarubbi Franco - Orozco Mateo
 
+/*
+    Conclusiones:
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|    
+    |         Lista Secuencial Ordenada         |   |    Lista Secuencial Ordenada Biseccion    |   |         Arbol de Busqueda Binaria         |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |   Funcion   |  Costo Max  |  Costo Medio  |   |   Funcion   |  Costo Max  |  Costo Medio  |   |   Funcion   |  Costo Max  |  Costo Medio  |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |    Alta     |    87.50    |     23.10     |   |    Alta     |    87.50    |     23.10     |   |    Alta     |     2.50    |     2.50      |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |    Baja     |    70.50    |     25.16     |   |    Baja     |    70.50    |     25.16     |   |    Baja     |     7.50    |     2.03      |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |  Evoc. Exit |    59.00    |     22.97     |   |  Evoc. Exit |     6.00    |     5.55      |   |  Evoc. Exit |     12.00   |     5.71      |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+    |  Evoc. Frac |    41.00    |     16.06     |   |  Evoc. Frac |     6.00    |     4.94      |   |  Evoc. Frac |     11.00   |     6.37      |
+    |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+
+    Podemos concluir analizando los resultados, que la estructura mas eficiente para dar de alta los elementos, es el ABB.
+    Saca bastante diferencia con respecto a los costos de dar de alta elementos en las listas.
+    Lo mismo sucede con la baja, el arbol es mucho mas eficiente que las correspondientes listas
+    Por el contrario, el costo de evocar un elemento es peor en el ABB que en la lista mediante busqueda binaria. Tanto para exito como para fracaso
+    Como conclusion, si debemos utilizar una estructura es importante considerar que accion vamos a realizar mas seguido. Esto es porque el ABB saca
+    ventaja en las altas y bajas. Pero en la BB es mejor la evocacion, por tanto si necesitamos evocar reiterdas veces, la biseccion es conveniente   
+*/
+
 
 #include "lso.h"
 #include "lsobb.h"
@@ -7,37 +31,37 @@
 
 
 //Funciones menu principal
-void mostrarEstructuras(abb , list , listBB , int , int );
+void mostrarEstructuras(abb , list , listBB , int , int );   //Mostrar las 3 estructuras
 
 
 //Funciones del menu LSO
-void loadList(list *, Deliveries *, int *, StructCost *);  //Cargar elementos
-void preload(list *, int *, StructCost *);    //Realizar precarga de datos por archivo
-void delete(list *, int *, StructCost *);    //Eliminar elementos
-void changeList(list *);    //Modificar elementos
-void information(list , StructCost *);     //Mostrar informacion de un elemento
+void loadList(list *, Deliveries *, int *, StructCost *);  //Cargar elementos en la LSO
+void preload(list *, int *, StructCost *);    //Realizar precarga de datos por archivo en la LSO
+void delete(list *, int *, StructCost *);    //Eliminar elementos en la LSO
+void changeList(list *);    //Modificar elementos en la LSO
+void information(list , StructCost *);     //Mostrar informacion de un elemento en la LSO
 
 
 //Funciones del menu LSOBB
-void loadListBB(listBB *, Deliveries *, int *, StructCost *);  //Cargar elementos
-void preloadListBB(listBB *, int *, StructCost *);    //Realizar precarga de datos por archivo
-void deleteListBB(listBB *, int *, StructCost *);    //Eliminar elementos
-void changeListBB(listBB *);    //Modificar elementos
-void informationListBB(listBB , StructCost *);     //Mostrar informacion de un elemento
+void loadListBB(listBB *, Deliveries *, int *, StructCost *);  //Cargar elementos en el LSOBB
+void preloadListBB(listBB *, int *, StructCost *);    //Precargar elementos en el LSOBB
+void deleteListBB(listBB *, int *, StructCost *);    //Eliminar elementos en la LSOBB
+void changeListBB(listBB *);    //Modificar elementos en la LSOBB
+void informationListBB(listBB , StructCost *);     //Mostrar informacion de un elemento en la LSOBB
 
 
 //Funciones del menu ABB
-void loadABB(abb *, Deliveries *, StructCost *);
-void deleteABB(abb *, StructCost *);
-void changeABB(abb *);
-void informationABB(abb , StructCost *);
-void preloadABB(abb *, StructCost *);
+void loadABB(abb *, Deliveries *, StructCost *);  //Cargar elementos en el ABB
+void deleteABB(abb *, StructCost *);   //Eliminar elementos en el ABB
+void changeABB(abb *);   //Modificar elementos en el ABB
+void informationABB(abb , StructCost *);   //Mostrar informacion en el ABB
+void preloadABB(abb *, StructCost *);   //Precargar elementos en el ABB
 
 
 //Funciones internas
 void loadDeliveries(Deliveries *);   //Funcion auxiliar de carga de datos
-void resetAll(list *, listBB *, abb *, int *, int *);
-int lecturaOperaciones(StructCost *, list *, listBB *, abb *, int *, int *);
+void resetAll(list *, listBB *, abb *, int *, int *);   //Funcion para resetear todas las estructuras
+int lecturaOperaciones(StructCost *, list *, listBB *, abb *, int *, int *);  //Funcion para leer desde el archivo
 
 
 int main(){
@@ -76,6 +100,7 @@ int main(){
     }while(menu < 1 || menu > 7);
     
     switch(menu){
+        //Manejo de la lista secuencial ordenada
         case 1: do{ 
                     printf("\n|===========================================|");
                     printf("\n|     1.Ingresar nuevos envios              |");
@@ -143,6 +168,7 @@ int main(){
                 }while(opcion != 6);
                 break;
 
+        //Manejo de la lista secuencial ordenada con busqueda binaria
         case 2: do{ 
                     printf("\n|===========================================|");
                     printf("\n|     1.Ingresar nuevos envios              |");
@@ -210,6 +236,7 @@ int main(){
                 }while(opcion != 6);
                 break;
 
+        //Manejo del arbol de busqueda binaria
         case 3: do{
                     printf("\n|===========================================|");
                     printf("\n|     1.Ingresar nuevos envios              |");
@@ -276,6 +303,7 @@ int main(){
                 }while(opcion != 6);
                 break;
 
+        //Comparar estructuras
         case 4: resetAll(&lso, &lsobb, &abbTree, &cant, &cantBB);
                 initStructCost(&c);
                 lect = lecturaOperaciones(&c, &lso, &lsobb, &abbTree, &cant, &cantBB);
@@ -289,9 +317,11 @@ int main(){
                 }
                 break;
 
+        //Mostrar estructuras
         case 5: mostrarEstructuras(abbTree, lso, lsobb, cant, cantBB);
                 break;
 
+        //Mostrar los costos
         case 6: mostrarCostos(c);
                 break;
     }
@@ -307,6 +337,7 @@ int main(){
 
  return 0;
 }
+
 
 
 
@@ -914,6 +945,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
 
 
 
+
 //Funciones del menu LSO
 void loadList(list *lso, Deliveries *dev, int *cant, StructCost *c){
 
@@ -1218,6 +1250,7 @@ void information(list lso, StructCost *c){
         scanf("%d", &enter);
     }while(enter != 1);
 }
+
 
 
 
