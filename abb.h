@@ -79,10 +79,10 @@ int localizarABB(abb *abbTree, char c[], float *costo){
 
     *costo = costLoc;
     if(abbTree->cursor != NULL){   //Cursor en nodo externo
-        return 1;                  //Fracaso
+        return 1;                  //Exito
     }
     else{
-        return 0;                  //Exito
+        return 0;                  //Fracaso
     }
 }
 
@@ -151,8 +151,7 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
     float costLoc = 0.0;
     float cost = 0.0;
     int ok;
-    Node *auxFather;
-    Node *auxCursor;
+    Node *auxFather, *auxCursor;
 
     if(localizarABB(abbTree, dev.code, &costLoc) == 1){
 
@@ -167,7 +166,7 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 //Case 1: eliminar nodo sin descendencia
                 if((abbTree->cursor->leftSon == NULL) && (abbTree->cursor->rightSon == NULL)){
                     if(abbTree->cursor == abbTree->root){  //Posible caso en que se elimina la raiz
-                        free((void*)(abbTree->cursor));
+                        free((abbTree->cursor));
                         abbTree->root = NULL;  //Colocar raiz en NULL (arbol vacio)
                         abbTree->cant = abbTree->cant - 1;
                         cost += 0.5;
@@ -176,8 +175,8 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                     }
                     else{
                         if(abbTree->father->leftSon == abbTree->cursor){  //Eliminar nodo sin descendia que es hijo izquierdo de otro nodo
-                            abbTree->father->leftSon == NULL;             //El hijo izquierdo del nodo padre, a NULL (hijo eliminado)
-                            free((void*)(abbTree->cursor));
+                            abbTree->father->leftSon = NULL;             //El hijo izquierdo del nodo padre, a NULL (hijo eliminado)
+                            free((abbTree->cursor));
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
                             cost += 0.5;
                             *costo = cost;
@@ -185,7 +184,7 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                         }
                         else{                                             //Cursor en el hijo derecho de un nodo
                             abbTree->father->rightSon = NULL;             //Eliminar nodo sin descendia que es hijo derecho de otro nodo
-                            free((void*)(abbTree->cursor));               
+                            free((abbTree->cursor));               
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
                             cost += 0.5;
                             *costo = cost;
@@ -199,36 +198,36 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 if((abbTree->cursor->leftSon == NULL) && (abbTree->cursor->rightSon != NULL)){  
                     if(abbTree->cursor == abbTree->root){                //Posible caso en que se elimine la raiz
                         abbTree->root = abbTree->cursor->rightSon;       //A la raiz le damos su hijo derecho
-                        free((void*)(abbTree->cursor));
+                        free((abbTree->cursor));
                         abbTree->cant = abbTree->cant - 1;               //Decrementar cantidad
                         cost += 0.5;
                         *costo = cost;
                         return 2;                                        //Exito
-                }
-                else{
-                    if(abbTree->father->leftSon == abbTree->cursor){   //Eliminar nodo (cursor) que es hijo izquierdo de otro (padre)
-                        abbTree->father->leftSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
-                        free((void*)(abbTree->cursor));
-                        abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
-                        cost += 0.5;
-                        *costo = cost;
-                        return 2;                                   //Exito
                     }
-                    else{                                           //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
-                        abbTree->father->rightSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
-                        free((void*)(abbTree->cursor));                         
-                        abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
-                        cost += 0.5;
-                        *costo = cost;
-                        return 2;                                   //Exito
+                    else{
+                        if(abbTree->father->leftSon == abbTree->cursor){   //Eliminar nodo (cursor) que es hijo izquierdo de otro (padre)
+                            abbTree->father->leftSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
+                            free((abbTree->cursor));
+                            abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
+                            cost += 0.5;
+                            *costo = cost;
+                            return 2;                                   //Exito
+                        }
+                        else{                                           //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
+                            abbTree->father->rightSon = abbTree->cursor->rightSon;  //Al padre del nodo a eliminar, le damos el hijo derecho del nodo a eliminar
+                            free((abbTree->cursor));                         
+                            abbTree->cant = abbTree->cant - 1;          //Decrementar cantidad
+                            cost += 0.5;
+                            *costo = cost;
+                            return 2;                                   //Exito
+                        }
                     }
                 }
-            }
                 else{   //Case 2: eliminar nodo con una descendencia (hijo nodo izquierdo) 
                     if((abbTree->cursor->leftSon != NULL) && (abbTree->cursor->rightSon == NULL)){ 
                         if(abbTree->cursor == abbTree->root){            //Posible caso en que se elimine la raiz
                             abbTree->root = abbTree->cursor->leftSon;    //A la raiz le damos su hijo izquierdo
-                            free((void*)(abbTree->cursor));
+                            free((abbTree->cursor));
                             abbTree->cant = abbTree->cant - 1;           //Decrementar cantidad
                             cost += 0.5;
                             return 2;                                    //Exito
@@ -236,14 +235,14 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                         else{
                             if(abbTree->father->leftSon == abbTree->cursor){          //Eliminar nodo (cursor) que es hijo izquierdo de otro (padre)
                                 abbTree->father->leftSon = abbTree->cursor->leftSon;  //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
-                                free((void*)(abbTree->cursor));
+                                free((abbTree->cursor));
                                 abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
                                 cost += 0.5;
                                 return 2;                                             //Exito
                             }
                             else{                                                     //Eliminar nodo (cursor) que es hijo derecho de otro (padre)
                                 abbTree->father->rightSon = abbTree->cursor->leftSon; //Al padre del nodo a eliminar, le damos el hijo izquierdo del nodo a eliminar
-                                free((void*)(abbTree->cursor));
+                                free((abbTree->cursor));
                                 abbTree->cant = abbTree->cant - 1;                    //Decrementar cantidad
                                 cost += 0.5;
                                 return 2;                                             //Exito
@@ -256,58 +255,30 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 //Case 3: eliminar nodo con dos descendencias
                 if((abbTree->cursor->leftSon != NULL) && (abbTree->cursor->rightSon != NULL)){
                 
-                    //abbTree->father = abbTree->cursor;           //Al puntero padre le damos cursor
-                    //abbTree->cursor = abbTree->cursor->rightSon;    //Al cursor le damos su hijo derecho
-                    //auxCursor = abbTree->cursor;
-                    //auxFather = auxCursor;
+                    auxCursor = abbTree->cursor->rightSon;
+                    auxFather = abbTree->cursor;
+                    cost += 1;
 
-                    auxCursor = abbTree->cursor;
-                    auxFather = auxCursor;
-                    auxCursor = auxCursor->rightSon;
-                    
-                    //Esta asignacion la hacemos para aplicar la politica de reemplazo "menor de los mayores"
-                    cost += 1.5;
-
-                    while(auxCursor->leftSon != NULL){        //Iterar en la medida que el hijo izquierdo no sea un nodo externo
-                        //abbTree->cursor = abbTree->cursor->leftSon; //Al cursor le damos su hijo izquierdo, buscando el menor de los mayores
-                        //auxCursor = auxCursor->leftSon;
+                    while(auxCursor->leftSon != NULL){
                         auxFather = auxCursor;
                         auxCursor = auxCursor->leftSon;
                         cost += 1;
                     }
-                    //abbTree->father->abbDev = abbTree->cursor->abbDev;  //Asignar datos del menor nodo, al nodo que se quiere eliminar
-                    //Ahora tenemos dos nodos con la misma informacion, luego eliminamos el nodo que tiene cursor
-                    cost += 0.5;
 
-                    if(auxFather != abbTree->cursor){
+                    abbTree->cursor->abbDev = auxCursor->abbDev;
+                    cost += 1;
+
+                    if(auxFather->leftSon == auxCursor){
                         auxFather->leftSon = auxCursor->rightSon;
                     }
                     else{
                         auxFather->rightSon = auxCursor->rightSon;
                     }
-
-                    /*
-                    while(auxFather->leftSon != abbTree->cursor){
-                        auxFather = auxFather->leftSon;
-                        cost += 0.5;
-                    }
-
-                    if(abbTree->cursor->rightSon != NULL){
-                        auxCursor = auxCursor->rightSon;
-                        auxFather->leftSon = auxCursor;
-                        cost += 1;
-                    }*/
-                    if(abbTree->cursor == abbTree->root){
-                        abbTree->root->abbDev = auxCursor->abbDev;
-                    }
-                    else{
-                        abbTree->cursor->abbDev = auxCursor->abbDev;
-                    }
-                    free((void*)auxCursor);
-                    auxCursor = NULL;
-                    abbTree->cant = abbTree->cant - 1;     //Decrementar cantidad
+                    cost += 0.5;
                     *costo = cost;
-                    return 2;                              //Exito
+                    free(auxCursor);
+                    abbTree->cant = abbTree->cant - 1;
+                    return 2;
                 }
             }
             else{
@@ -347,7 +318,7 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                     }
                     else{
                         if(abbTree->father->leftSon == abbTree->cursor){  //Eliminar nodo sin descendia que es hijo izquierdo de otro nodo
-                            abbTree->father->leftSon == NULL;             //El hijo izquierdo del nodo padre, a NULL (hijo eliminado)
+                            abbTree->father->leftSon = NULL;             //El hijo izquierdo del nodo padre, a NULL (hijo eliminado)
                             free((void*)(abbTree->cursor));
                             abbTree->cant = abbTree->cant - 1;            //Decrementar cantidad
                             cost += 0.5;
@@ -427,37 +398,30 @@ int bajaABB(abb *abbTree, Deliveries dev, float *costo, int confirm){
                 //Case 3: eliminar nodo con dos descendencias
                 if((abbTree->cursor->leftSon != NULL) && (abbTree->cursor->rightSon != NULL)){
                 
-                    abbTree->father = abbTree->cursor;              //Al puntero padre le damos cursor
-                    abbTree->cursor = abbTree->cursor->rightSon;    //Al cursor le damos su hijo derecho
-                    //Esta asignacion la hacemos para aplicar la politica de reemplazo "menor de los mayores"
+                    auxCursor = abbTree->cursor->rightSon;
+                    auxFather = abbTree->cursor;
                     cost += 1;
 
-                    while(abbTree->cursor->leftSon != NULL){        //Iterar en la medida que el hijo izquierdo no sea un nodo externo
-                        abbTree->cursor = abbTree->cursor->leftSon; //Al cursor le damos su hijo izquierdo, buscando el menor de los mayores
-                        cost += 0.5;
+                    while(auxCursor->leftSon != NULL){
+                        auxFather = auxCursor;
+                        auxCursor = auxCursor->leftSon;
+                        cost += 1;
                     }
-                    abbTree->father->abbDev = abbTree->cursor->abbDev;  //Asignar datos del menor nodo, al nodo que se quiere eliminar
-                    //Ahora tenemos dos nodos con la misma informacion, luego eliminamos el nodo que tiene cursor
-                    cost += 0.5;
 
-                    if(abbTree->father->rightSon != abbTree->cursor){   //Si el hijo derecho del nodo padre, es distinto del cursor
-                        abbTree->father = abbTree->father->rightSon;    //A padre le damos su hijo derecho
-                        cost += 0.5;
-                        while(abbTree->father->leftSon != abbTree->cursor){   //Iterar en la medida que el hijo izquierdo de padre, sea distinto del cursor
-                            abbTree->father = abbTree->father->leftSon;       //A padre le damos su hijo izquierdo
-                            cost += 0.5;
-                        }
-                        abbTree->father->leftSon = abbTree->cursor->rightSon; //Al hijo izquierdo de padre, le damos el hijo derecho del cursor
-                        cost += 0.5;
+                    abbTree->cursor->abbDev = auxCursor->abbDev;
+                    cost += 1;
+
+                    if(auxFather->leftSon == auxCursor){
+                        auxFather->leftSon = auxCursor->rightSon;
                     }
-                    else{                                                       //Si el hijo derecho del nodo padre, es igual al cursor
-                        abbTree->father->rightSon = abbTree->cursor->rightSon;  //Al hijo derecho de padre, le damos el hijo derecho del cursor
-                        cost += 0.5;
+                    else{
+                        auxFather->rightSon = auxCursor->rightSon;
                     }
-                    free((void*)(abbTree->cursor));
-                    abbTree->cant = abbTree->cant - 1;     //Decrementar cantidad
+                    cost += 0.5;
                     *costo = cost;
-                    return 2;                              //Exito
+                    free(auxCursor);
+                    abbTree->cant = abbTree->cant - 1;
+                    return 2;
                 }
             }
             else{

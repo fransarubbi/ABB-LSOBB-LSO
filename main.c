@@ -524,8 +524,9 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
         printf("|----------------------------------------------|\n\n");
         return 0;
     }
-    else{
+    else{ 
         while(!feof(preload)){
+
             fscanf(preload, "%d\n", &codeOperator);
 
             fscanf(preload, " %[^\n]\n", code);
@@ -782,7 +783,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                         switch(value){
                             case 1: printf("\n|---------------------------------|");
                                     printf("\n    INFORMACION DEL ENVIO %s", code);
-                                    printf("\n|---------------------------------|\n\n");
+                                    printf("\n|---------------------------------|\n");
                                     printf("\n| Codigo: %s", dev.code);
                                     printf("\n| Dni receptor: %ld", dev.doc);
                                     printf("\n| Dni remitente: %ld", dev.docSender);
@@ -791,6 +792,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     printf("\n| Domicilio del envio: %s", dev.address);
                                     printf("\n| Fecha de envio: %s", dev.dateSender);
                                     printf("\n| Fecha de recepcion: %s", dev.dateReceived);
+                                    printf("\n|---------------------------------\n|");
                                     if(c->lso.maxCostSucEvo < costo){
                                         c->lso.maxCostSucEvo = costo;
                                     }
@@ -823,7 +825,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                         switch(value){
                             case 1: printf("\n|---------------------------------|");
                                     printf("\n    INFORMACION DEL ENVIO %s", code);
-                                    printf("\n|---------------------------------|\n\n");
+                                    printf("\n|---------------------------------|\n");
                                     printf("\n| Codigo: %s", dev.code);
                                     printf("\n| Dni receptor: %ld", dev.doc);
                                     printf("\n| Dni remitente: %ld", dev.docSender);
@@ -832,6 +834,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     printf("\n| Domicilio del envio: %s", dev.address);
                                     printf("\n| Fecha de envio: %s", dev.dateSender);
                                     printf("\n| Fecha de recepcion: %s", dev.dateReceived);
+                                    printf("\n|---------------------------------\n|");
                                     if(c->lsobb.maxCostSucEvo < costo){
                                         c->lsobb.maxCostSucEvo = costo;
                                     }
@@ -864,7 +867,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                         switch(value){
                             case 1: printf("\n|---------------------------------|");
                                     printf("\n    INFORMACION DEL ENVIO %s", code);
-                                    printf("\n|---------------------------------|\n\n");
+                                    printf("\n|---------------------------------|\n");
                                     printf("\n| Codigo: %s", dev.code);
                                     printf("\n| Dni receptor: %ld", dev.doc);
                                     printf("\n| Dni remitente: %ld", dev.docSender);
@@ -873,6 +876,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     printf("\n| Domicilio del envio: %s", dev.address);
                                     printf("\n| Fecha de envio: %s", dev.dateSender);
                                     printf("\n| Fecha de recepcion: %s", dev.dateReceived);
+                                    printf("\n|---------------------------------\n|");
                                     if(c->abb.maxCostSucEvo < costo){
                                         c->abb.maxCostSucEvo = costo;
                                     }
@@ -902,6 +906,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
             }
             codeOperator = 0;
         }
+        
         fclose(preload);
         return 1;
     }
