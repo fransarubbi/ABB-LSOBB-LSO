@@ -17,16 +17,6 @@ void initLSOBB(listBB *lso){  //Inicializar la listBBa es poner last en -1 (vaci
 }
 
 
-//Reset lista para comparar estructura
-void resetLSOBB(listBB *lsobb){
-    int i;
-    lsobb->last = -1;
-    for(i = 0; i <= (SIZE - 1); i++){
-        initDev(&(lsobb->deliveriesListBB[i]));
-    }
-}
-
-
 /*
 Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento
@@ -36,7 +26,8 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
 
     int li = -1;
     int ls = lsobb.last;
-    int t = (floor((li + ls + 2)/2));
+    int t = (li + ls + 2)/2;
+    int vector[lsobb.last+1];
     float costLoc = 0.0;
 
     if(lsobb.last == -1){
@@ -54,7 +45,7 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
                 ls = t - 1;   //elemento buscado es menor que lo que tengo en t
             }
             costLoc += 1;
-            t = (floor((li + ls + 2)/2));
+            t = (li + ls + 2)/2;
         }
 
         *costo = costLoc;
@@ -96,13 +87,12 @@ int altaLSOBB(listBB *lsobb, Deliveries dev, float *costo){    //Alta
             //El elemento no existe en la lista
             while(position <= last){   //Realizar shifteo a derecha
                 lsobb->deliveriesListBB[last + 1] = lsobb->deliveriesListBB[last];
-                cost += 1.5;
+                cost += 1;
                 last = last - 1;
             }
             lsobb->deliveriesListBB[position] = dev;   //Ingresar el nuevo elemento en el sitio adecuado
-            cost += 0.5;
-            *costo = cost;
             lsobb->last = lsobb->last + 1;   //Actualizar el valor de lso.last
+            *costo = cost;
             return 2; 
         }
     }
@@ -119,7 +109,7 @@ return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 return 3 - Fracaso por coincidir en codigo, pero no la nupla completa
 */
-int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo, int confirm){      //Baja
+int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo){      //Baja
     int position, ok;
     float costLoc = 0.0;
     float cost = 0.0;
@@ -128,71 +118,29 @@ int bajaLSOBB(listBB *lsobb, Deliveries dev, float *costo, int confirm){      //
         return 0;   //No podemos dar de baja porque no existe el elemento
     }
     else{
-        if(confirm == 1){
-            int a = strcmp((dev).code, lsobb->deliveriesListBB[position].code);
-            int b = strcmp((dev).name, lsobb->deliveriesListBB[position].name);
-            int c = strcmp((dev).nameSender, lsobb->deliveriesListBB[position].nameSender);
-            int d = strcmp((dev).address, lsobb->deliveriesListBB[position].address);
-            int e = strcmp((dev).dateSender, lsobb->deliveriesListBB[position].dateSender);
-            int f = strcmp((dev).dateReceived, lsobb->deliveriesListBB[position].dateReceived);
-            if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lsobb->deliveriesListBB[position].doc) && (dev.docSender == lsobb->deliveriesListBB[position].docSender)){
-                if(position == lsobb->last){
-                    lsobb->last = lsobb->last - 1;
-                }
-                else{
-                    while(position < lsobb->last){
-                        lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
-                        position = position + 1;
-                        cost += 1.5;
-                    }
-                    lsobb->last = lsobb->last - 1;
-                    *costo = cost;
-                }
-                return 2;  //Baja exitosa
+        int a = strcmp((dev).code, lsobb->deliveriesListBB[position].code);
+        int b = strcmp((dev).name, lsobb->deliveriesListBB[position].name);
+        int c = strcmp((dev).nameSender, lsobb->deliveriesListBB[position].nameSender);
+        int d = strcmp((dev).address, lsobb->deliveriesListBB[position].address);
+        int e = strcmp((dev).dateSender, lsobb->deliveriesListBB[position].dateSender);
+        int f = strcmp((dev).dateReceived, lsobb->deliveriesListBB[position].dateReceived);
+        if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lsobb->deliveriesListBB[position].doc) && (dev.docSender == lsobb->deliveriesListBB[position].docSender)){
+            if(position == lsobb->last){
+                lsobb->last = lsobb->last - 1;
             }
             else{
-                return 3;
+                while(position < lsobb->last){
+                    lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
+                    position = position + 1;
+                    cost += 1;
+                }
+                lsobb->last = lsobb->last - 1;
+                *costo = cost;
             }
-            
+            return 2;  //Baja exitosa
         }
         else{
-            do{
-                printf("\n===========================================================");
-                printf("\n            Esta por eliminar datos. Estos son:         ");
-                printf("\n===========================================================\n");
-                printf("\n| Codigo: %s", lsobb->deliveriesListBB[position].code);
-                printf("\n| Dni receptor: %ld", lsobb->deliveriesListBB[position].doc);
-                printf("\n| Dni remitente: %ld", lsobb->deliveriesListBB[position].docSender);
-                printf("\n| Nombre y apellido del receptor: %s", lsobb->deliveriesListBB[position].name);
-                printf("\n| Nombre y apellido del remitente: %s", lsobb->deliveriesListBB[position].nameSender);
-                printf("\n| Domicilio del envio: %s", lsobb->deliveriesListBB[position].address);
-                printf("\n| Fecha de envio: %s", lsobb->deliveriesListBB[position].dateSender);
-                printf("\n| Fecha de recepcion: %s", lsobb->deliveriesListBB[position].dateReceived);
-                printf("\n===========================================================");
-                printf("\n                    ¿Esta de acuerdo?                    ");
-                printf("\n             0.No                        1.Si            ");
-                printf("\n===========================================================\n");
-                scanf("%d", &ok);
-            }while(ok < 0 || ok > 1);
-
-            if(ok == 1){
-                if(position == lsobb->last){
-                    lsobb->last = lsobb->last - 1;
-                }
-                else{
-                    while(position < lsobb->last){
-                        lsobb->deliveriesListBB[position] = lsobb->deliveriesListBB[position + 1];
-                        position = position + 1;
-                        cost += 1.5;
-                    }
-                    lsobb->last = lsobb->last - 1;
-                    *costo = cost;
-                }
-                return 2;  //Baja exitosa
-            }
-            else{
-                return 1;
-            }
+            return 3;
         }
     }
 }

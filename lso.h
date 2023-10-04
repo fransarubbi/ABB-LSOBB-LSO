@@ -16,16 +16,6 @@ void init(list *lso){  //Inicializar la lista es poner last en -1 (vacia)
 }
 
 
-//Reset lista para comparar estructura
-void resetLSO(list *lso){
-    int i;
-    lso->last = -1;
-    for(i = 0; i <= (SIZE - 1); i++){
-        initDev(&(lso->deliveriesList[i]));
-    }
-}
-
-
 /*
 Codificacion de Localizacion:
 return 0 - Fracaso, no esta el elemento
@@ -36,13 +26,14 @@ int localizarLSO(list lso, char c[], int *position, float *costo){   //Localizar
     float cost = 0.0;
 
     while((i <= lso.last) && strcmp(lso.deliveriesList[i].code, c) < 0){   //Porque esta ordenada de menor a mayor
-        i++;
         cost += 1;
+        i++;
     }
 
     *position = i;  
-    *costo = cost;
     if(i <= lso.last){
+        cost += 1;  //Costo de la celda consultada cuando ya no entra al while
+        *costo = cost;
         if(strcmp(lso.deliveriesList[i].code, c) == 0){  
             return 1;
         }
@@ -77,11 +68,10 @@ int altaLSO(list *lso, Deliveries dev, float *costo){    //Alta
             //El elemento no existe en la lista
             while(position <= last){   //Realizar shifteo a derecha
                 lso->deliveriesList[last + 1] = lso->deliveriesList[last];
+                cost += 1;  //1 por la celda consultada y 0.5 por la copia de datos
                 last = last - 1;
-                cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
             }
             lso->deliveriesList[position] = dev;   //Ingresar el nuevo elemento en el sitio adecuado
-            cost += 0.5;
             lso->last = lso->last + 1;   //Actualizar el valor de lso.last
             *costo = cost;
             return 2; 
@@ -100,7 +90,7 @@ return 1 - Fracaso por no confirmar la baja
 return 2 - Exito
 return 3 - Fracaso por coincidir en codigo, pero no la nupla completa
 */
-int bajaLSO(list *lso, Deliveries dev, float *costo, int confirm){      //Baja
+int bajaLSO(list *lso, Deliveries dev, float *costo){      //Baja
     int position, ok;
     float costLoc = 0.0;
     float cost = 0.0;
@@ -109,70 +99,29 @@ int bajaLSO(list *lso, Deliveries dev, float *costo, int confirm){      //Baja
         return 0;   //No podemos dar de baja porque no existe el elemento
     }
     else{
-        if(confirm == 1){
-            int a = strcmp((dev).code, lso->deliveriesList[position].code);
-            int b = strcmp((dev).name, lso->deliveriesList[position].name);
-            int c = strcmp((dev).nameSender, lso->deliveriesList[position].nameSender);
-            int d = strcmp((dev).address, lso->deliveriesList[position].address);
-            int e = strcmp((dev).dateSender, lso->deliveriesList[position].dateSender);
-            int f = strcmp((dev).dateReceived, lso->deliveriesList[position].dateReceived);
-            if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lso->deliveriesList[position].doc) && (dev.docSender == lso->deliveriesList[position].docSender)){
-                if(position == lso->last){
-                    lso->last = lso->last - 1;
-                }
-                else{
-                    while(position < lso->last){
-                        lso->deliveriesList[position] = lso->deliveriesList[position + 1];
-                        position = position + 1;
-                        cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
-                    }
-                    lso->last = lso->last - 1;
-                    *costo = cost;
-                }
-                return 2;  //Baja exitosa
+        int a = strcmp((dev).code, lso->deliveriesList[position].code);
+        int b = strcmp((dev).name, lso->deliveriesList[position].name);
+        int c = strcmp((dev).nameSender, lso->deliveriesList[position].nameSender);
+        int d = strcmp((dev).address, lso->deliveriesList[position].address);
+        int e = strcmp((dev).dateSender, lso->deliveriesList[position].dateSender);
+        int f = strcmp((dev).dateReceived, lso->deliveriesList[position].dateReceived);
+        if(a == 0 && b == 0 && c == 0 && d == 0 && e == 0 && f == 0 && (dev.doc == lso->deliveriesList[position].doc) && (dev.docSender == lso->deliveriesList[position].docSender)){
+            if(position == lso->last){
+                lso->last = lso->last - 1;
             }
             else{
-                return 3; //Fracaso por no coincidir
+                while(position < lso->last){
+                    lso->deliveriesList[position] = lso->deliveriesList[position + 1];
+                    position = position + 1;
+                    cost += 1;  //1 por la celda consultada y 0.5 por la copia de datos
+                }
+                lso->last = lso->last - 1;
+                *costo = cost;
             }
+            return 2;  //Baja exitosa
         }
         else{
-            do{
-                printf("\n===========================================================");
-                printf("\n            Esta por eliminar datos. Estos son:         ");
-                printf("\n===========================================================\n");
-                printf("\n| Codigo: %s", lso->deliveriesList[position].code);
-                printf("\n| Dni receptor: %ld", lso->deliveriesList[position].doc);
-                printf("\n| Dni remitente: %ld", lso->deliveriesList[position].docSender);
-                printf("\n| Nombre y apellido del receptor: %s", lso->deliveriesList[position].name);
-                printf("\n| Nombre y apellido del remitente: %s", lso->deliveriesList[position].nameSender);
-                printf("\n| Domicilio del envio: %s", lso->deliveriesList[position].address);
-                printf("\n| Fecha de envio: %s", lso->deliveriesList[position].dateSender);
-                printf("\n| Fecha de recepcion: %s", lso->deliveriesList[position].dateReceived);
-                printf("\n===========================================================");
-                printf("\n                    ¿Esta de acuerdo?                    ");
-                printf("\n             0.No                        1.Si            ");
-                printf("\n===========================================================\n");
-                scanf("%d", &ok);
-            }while(ok < 0 || ok > 1);
-
-            if(ok == 1){
-                if(position == lso->last){
-                    lso->last = lso->last - 1;
-                }
-                else{
-                    while(position < lso->last){
-                        lso->deliveriesList[position] = lso->deliveriesList[position + 1];
-                        position = position + 1;
-                        cost += 1.5;  //1 por la celda consultada y 0.5 por la copia de datos
-                    }
-                    lso->last = lso->last - 1;
-                    *costo = cost;
-                }
-                return 2;  //Baja exitosa
-            }
-            else{
-                return 1;
-            }
+            return 3; //Fracaso por no coincidir
         }
     }
 }
