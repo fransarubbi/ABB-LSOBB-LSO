@@ -27,7 +27,7 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
     int li = -1;
     int ls = lsobb.last;
     int t = (li + ls + 2)/2;
-    int vector[lsobb.last+1];
+    int vector[lsobb.last+1], i;
     float costLoc = 0.0;
 
     if(lsobb.last == -1){
@@ -35,7 +35,11 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
         return 0;        //Lista vacia, por tanto fracasa la localizacion
     }
     else{
-        
+        //Inicializacion del vector de costos
+        for(i = 0; i < (lsobb.last + 1); i++){
+            vector[i] = 0;
+        }
+
         while((li + 1) < ls){   
             
             if((strcmp(lsobb.deliveriesListBB[t].code, c) < 0) || (strcmp(lsobb.deliveriesListBB[t].code, c) == 0)){  
@@ -44,8 +48,16 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
             else{
                 ls = t - 1;   //elemento buscado es menor que lo que tengo en t
             }
-            costLoc += 1;
+
+            if(vector[t] == 0){
+                costLoc += 1;
+                vector[t] = 1;
+            }
             t = (li + ls + 2)/2;
+        }
+
+        if(vector[ls] == 0){
+            costLoc += 1;
         }
 
         *costo = costLoc;

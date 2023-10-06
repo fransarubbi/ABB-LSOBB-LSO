@@ -32,7 +32,7 @@ int localizarLSO(list lso, char c[], int *position, float *costo){   //Localizar
 
     *position = i;  
     if(i <= lso.last){
-        cost += 1;  //Costo de la celda consultada cuando ya no entra al while
+        cost += 1;
         *costo = cost;
         if(strcmp(lso.deliveriesList[i].code, c) == 0){  
             return 1;
@@ -42,6 +42,7 @@ int localizarLSO(list lso, char c[], int *position, float *costo){   //Localizar
         }
     }
     else{
+        *costo = cost;
         return 0;
     } 
 }

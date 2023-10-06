@@ -13,7 +13,7 @@
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
     |  Evoc. Exit |    60.00    |     23.97     |   |  Evoc. Exit |     6.00    |               |   |  Evoc. Exit |     12.00   |     5.71      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
-    |  Evoc. Frac |    42.00    |               |   |  Evoc. Frac |     6.00    |               |   |  Evoc. Frac |     10.00   |               |
+    |  Evoc. Frac |    42.00    |        ok     |   |  Evoc. Frac |     6.00    |               |   |  Evoc. Frac |     10.00   |     ok        |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
 */
 
@@ -308,7 +308,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
     float costo;
 
     FILE *preload;
-    preload = fopen("Operaciones-Envios.txt", "r");
+    preload = fopen("Operaciones.txt", "r");
 
     if(preload == NULL){
         printf("|----------------------------------------------|\n");
@@ -389,9 +389,9 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
                                     c->lsobb.costAcumInsert += costo;
                                     c->lsobb.medCostInsert = (c->lsobb.costAcumInsert)/(c->lsobb.cantInsert);
                                 }
-                            }                            
+                            }        
+                            costo = 0.0;                    
                             if(altaABB(abbTree, dev, &costo) == 2){
-                                costo = 0.0;
                                 if(c->abb.maxCostInsert < costo){
                                     c->abb.maxCostInsert = costo;
                                 }
