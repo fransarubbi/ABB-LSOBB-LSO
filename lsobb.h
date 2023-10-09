@@ -32,6 +32,7 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
 
     if(lsobb.last == -1){
         *position = 0;   //Posicion donde deberia ir el elemento a cargar
+        *costo = costLoc;
         return 0;        //Lista vacia, por tanto fracasa la localizacion
     }
     else{
@@ -43,7 +44,7 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
         while((li + 1) < ls){   
             
             if((strcmp(lsobb.deliveriesListBB[t].code, c) < 0) || (strcmp(lsobb.deliveriesListBB[t].code, c) == 0)){  
-                li = t - 1;   //elemento buscado es mayor que lo que tengo en t
+                li = t - 1;   //elemento buscado es mayor o igual que lo que tengo en t
             }
             else{
                 ls = t - 1;   //elemento buscado es menor que lo que tengo en t
@@ -58,9 +59,10 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
 
         if(vector[ls] == 0){
             costLoc += 1;
+            vector[ls] = 1;
         }
-
         *costo = costLoc;
+        
         if(strcmp(lsobb.deliveriesListBB[ls].code, c) == 0){
             *position = ls;
             return 1;

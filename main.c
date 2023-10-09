@@ -9,11 +9,11 @@
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
     |    Alta     |    58.00    |     15.07     |   |    Alta     |    58.00    |     15.07     |   |    Alta     |     0.50    |     0.50      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
-    |    Baja     |    47.00    |     16.77     |   |    Baja     |    47.00    |     16.77     |   |    Baja     |     1.50    |               |
+    |    Baja     |    47.00    |     16.77     |   |    Baja     |    47.00    |     16.77     |   |    Baja     |     1.50    |     0.98      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
-    |  Evoc. Exit |    60.00    |     23.97     |   |  Evoc. Exit |     6.00    |               |   |  Evoc. Exit |     12.00   |     5.71      |
+    |  Evoc. Exit |    60.00    |     23.97     |   |  Evoc. Exit |     6.00    |      5.57     |   |  Evoc. Exit |     12.00   |     5.71      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
-    |  Evoc. Frac |    42.00    |        ok     |   |  Evoc. Frac |     6.00    |               |   |  Evoc. Frac |     10.00   |     ok        |
+    |  Evoc. Frac |    42.00    |     17.02     |   |  Evoc. Frac |     6.00    |      4.96     |   |  Evoc. Frac |     10.00   |     5.37      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
 */
 
@@ -195,9 +195,9 @@ void mostrarCostos(StructCost c){
     printf("\n|------------------------------------------------------");
     printf("\n|      Baja     |   %.2f                %.2f              ", c.lsobb.maxCostSupress, c.lsobb.medCostSupress);
     printf("\n|------------------------------------------------------");
-    printf("\n| Evoc. Exitosa |   %.2f                %.2f              ", c.lsobb.maxCostSucEvo, c.lsobb.medCostSucEvo);
+    printf("\n| Evoc. Exitosa |   %.2f                 %.2f              ", c.lsobb.maxCostSucEvo, c.lsobb.medCostSucEvo);
     printf("\n|------------------------------------------------------");
-    printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.lsobb.maxCostFailEvo, c.lsobb.medCostFailEvo);
+    printf("\n| Evoc. Fracaso |   %.2f                 %.2f              ", c.lsobb.maxCostFailEvo, c.lsobb.medCostFailEvo);
     printf("\n|------------------------------------------------------|\n");
 
     printf("\n|------------------------------------------------------|");
@@ -209,9 +209,9 @@ void mostrarCostos(StructCost c){
     printf("\n|------------------------------------------------------");
     printf("\n|      Baja     |   %.2f                %.2f              ", c.abb.maxCostSupress, c.abb.medCostSupress);
     printf("\n|------------------------------------------------------");
-    printf("\n| Evoc. Exitosa |   %.2f                %.2f              ", c.abb.maxCostSucEvo, c.abb.medCostSucEvo);
+    printf("\n| Evoc. Exitosa |   %.2f               %.2f              ", c.abb.maxCostSucEvo, c.abb.medCostSucEvo);
     printf("\n|------------------------------------------------------");
-    printf("\n| Evoc. Fracaso |   %.2f                %.2f              ", c.abb.maxCostFailEvo, c.abb.medCostFailEvo);
+    printf("\n| Evoc. Fracaso |   %.2f               %.2f              ", c.abb.maxCostFailEvo, c.abb.medCostFailEvo);
     printf("\n|------------------------------------------------------|\n\n\n");
 }
 
@@ -308,7 +308,7 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
     float costo;
 
     FILE *preload;
-    preload = fopen("Operaciones.txt", "r");
+    preload = fopen("Operaciones-Envios.txt", "r");
 
     if(preload == NULL){
         printf("|----------------------------------------------|\n");
