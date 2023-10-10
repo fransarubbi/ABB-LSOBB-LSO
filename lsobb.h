@@ -59,7 +59,6 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
 
         if(vector[ls] == 0){
             costLoc += 1;
-            vector[ls] = 1;
         }
         *costo = costLoc;
         

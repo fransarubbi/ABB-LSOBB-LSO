@@ -1,7 +1,7 @@
 //Grupo 7  Sarubbi Franco - Orozco Mateo
 
 /*
-    Conclusiones:
+    Conclusion:
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|    
     |         Lista Secuencial Ordenada         |   |    Lista Secuencial Ordenada Biseccion    |   |         Arbol de Busqueda Binaria         |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
@@ -35,69 +35,69 @@ void resetAll(list *, listBB *, abb *, int *, int *);   //Funcion para resetear 
 
 int main(){
 
- abb abbTree;
- list lso;
- listBB lsobb;
- Deliveries dev;
- StructCost c;
- int opcion, cant = 0, cantBB = 0, lect, menu;
+    abb abbTree;
+    list lso;
+    listBB lsobb;
+    Deliveries dev;
+    StructCost c;
+    int cant = 0, cantBB = 0, lect, menu;
 
- init(&lso);
- initLSOBB(&lsobb);
- initABB(&abbTree);
- initStructCost(&c);
+    init(&lso);
+    initLSOBB(&lsobb);
+    initABB(&abbTree);
+    initStructCost(&c);
 
-
- do{
     do{
-        printf("\n|===========================================|");
-        printf("\n|                BIENVENIDOS!               |");
-        printf("\n|              ENVIOS EL REVOLEO            |");
-        printf("\n|===========================================|");
-        printf("\n|              MENU DE OPCIONES             |");
-        printf("\n|===========================================|");
-        printf("\n|         1. Comparar estructuras           |");
-        printf("\n|         2. Mostrar estructuras            |");
-        printf("\n|         3. Mostrar costos cargados        |");
-        printf("\n|         4. Salir del sistema              |");
-        printf("\n|===========================================|\n\n");
-        scanf("%d", &menu);
-    }while(menu < 1 || menu > 4);
+        do{
+            printf("\n|===========================================|");
+            printf("\n|                BIENVENIDOS!               |");
+            printf("\n|              ENVIOS EL REVOLEO            |");
+            printf("\n|===========================================|");
+            printf("\n|              MENU DE OPCIONES             |");
+            printf("\n|===========================================|");
+            printf("\n|         1. Comparar estructuras           |");
+            printf("\n|         2. Mostrar estructuras            |");
+            printf("\n|         3. Mostrar costos cargados        |");
+            printf("\n|         4. Salir del sistema              |");
+            printf("\n|===========================================|\n\n");
+            scanf("%d", &menu);
+        }while(menu < 1 || menu > 4);
     
-    switch(menu){
-        //Comparar estructuras
-        case 1: resetAll(&lso, &lsobb, &abbTree, &cant, &cantBB);
-                initStructCost(&c);
-                lect = lecturaOperaciones(&c, &lso, &lsobb, &abbTree, &cant, &cantBB);
-                if(lect == 1){
-                    mostrarCostos(c);
-                }
-                else{
-                    printf("\n|-------------------------------------------------------------------|");
-                    printf("\n| No hay costos cargados. No se ha realizado la lectura por archivo |");
-                    printf("\n|-------------------------------------------------------------------|");
-                }
-                break;
+        switch(menu){
+            //Comparar estructuras
+            case 1: resetAll(&lso, &lsobb, &abbTree, &cant, &cantBB);
+                    initStructCost(&c);
+                    lect = lecturaOperaciones(&c, &lso, &lsobb, &abbTree, &cant, &cantBB);
+                    if(lect == 1){
+                        mostrarCostos(c);
+                    }
+                    else{
+                        printf("\n|-------------------------------------------------------------------|");
+                        printf("\n| No hay costos cargados. No se ha realizado la lectura por archivo |");
+                        printf("\n|-------------------------------------------------------------------|");
+                    }
+                    break;
 
-        //Mostrar estructuras
-        case 2: mostrarEstructuras(abbTree, lso, lsobb, cant, cantBB);
-                break;
+            //Mostrar estructuras
+            case 2: mostrarEstructuras(abbTree, lso, lsobb, cant, cantBB);
+                    break;
 
-        //Mostrar los costos
-        case 3: mostrarCostos(c);
-                break;
-    }
- }while(menu != 4);
+            //Mostrar los costos
+            case 3: mostrarCostos(c);
+                    break;
+        }
+        
+    }while(menu != 4);
 
  
- printf("\n|===========================================|");
- printf("\n|       GRACIAS POR USAR EL SISTEMA         |");
- printf("\n|             ENVIOS EL REVOLEO             |");
- printf("\n|===========================================|");
- printf("\n|      Sarubbi Franco - Orozco Mateo        |");
- printf("\n|===========================================|\n\n");
+    printf("\n|===========================================|");
+    printf("\n|       GRACIAS POR USAR EL SISTEMA         |");
+    printf("\n|             ENVIOS EL REVOLEO             |");
+    printf("\n|===========================================|");
+    printf("\n|      Sarubbi Franco - Orozco Mateo        |");
+    printf("\n|===========================================|\n\n");
 
- return 0;
+    return 0;
 }
 
 
