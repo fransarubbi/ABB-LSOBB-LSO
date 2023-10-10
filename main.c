@@ -13,7 +13,7 @@
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
     |  Evoc. Exit |    60.00    |     23.97     |   |  Evoc. Exit |     6.00    |      5.57     |   |  Evoc. Exit |     12.00   |     5.71      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
-    |  Evoc. Frac |    42.00    |     17.02     |   |  Evoc. Frac |     6.00    |      4.96     |   |  Evoc. Frac |     10.00   |     5.37      |
+    |  Evoc. Frac |    42.00    |     16.70     |   |  Evoc. Frac |     6.00    |      4.87     |   |  Evoc. Frac |     10.00   |     5.27      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
 */
 
@@ -442,68 +442,62 @@ int lecturaOperaciones(StructCost *c, list *lso, listBB *lsobb, abb *abbTree, in
             }
             else{
                 if(codeOperator == 3){
-                    if(*cant > 0){
-                        costo = 0.0;
-                        value = evocacionLSO(*lso, &dev, &costo);
-                        switch(value){
-                            case 1: if(c->lso.maxCostSucEvo < costo){
-                                        c->lso.maxCostSucEvo = costo;
-                                    }
-                                    c->lso.cantSucEvo += 1;
-                                    c->lso.costAcumSucEvo += costo;
-                                    c->lso.medCostSucEvo = (c->lso.costAcumSucEvo)/(c->lso.cantSucEvo);
-                                    break;
+                    costo = 0.0;
+                    value = evocacionLSO(*lso, &dev, &costo);
+                    switch(value){
+                        case 1: if(c->lso.maxCostSucEvo < costo){
+                                    c->lso.maxCostSucEvo = costo;
+                                }
+                                c->lso.cantSucEvo += 1;
+                                c->lso.costAcumSucEvo += costo;
+                                c->lso.medCostSucEvo = (c->lso.costAcumSucEvo)/(c->lso.cantSucEvo);
+                                break;
 
-                            case 0: if(c->lso.maxCostFailEvo < costo){
-                                        c->lso.maxCostFailEvo = costo;
-                                    }
-                                    c->lso.cantFailEvo += 1;
-                                    c->lso.costAcumFailEvo += costo;
-                                    c->lso.medCostFailEvo = (c->lso.costAcumFailEvo)/(c->lso.cantFailEvo);
-                                    break;
-                        }
+                        case 0: if(c->lso.maxCostFailEvo < costo){
+                                    c->lso.maxCostFailEvo = costo;
+                                }
+                                c->lso.cantFailEvo += 1;
+                                c->lso.costAcumFailEvo += costo;
+                                c->lso.medCostFailEvo = (c->lso.costAcumFailEvo)/(c->lso.cantFailEvo);
+                                break;
                     }
-                    if(*cantBB > 0){
-                        costo = 0.0;
-                        value = evocacionLSOBB(*lsobb, &dev, &costo);
-                        switch(value){
-                            case 1: if(c->lsobb.maxCostSucEvo < costo){
-                                        c->lsobb.maxCostSucEvo = costo;
-                                    }
-                                    c->lsobb.cantSucEvo += 1;
-                                    c->lsobb.costAcumSucEvo += costo;
-                                    c->lsobb.medCostSucEvo = (c->lsobb.costAcumSucEvo)/(c->lsobb.cantSucEvo);
-                                    break;
+                    costo = 0.0;
+                    value = evocacionLSOBB(*lsobb, &dev, &costo);
+                    switch(value){
+                        case 1: if(c->lsobb.maxCostSucEvo < costo){
+                                    c->lsobb.maxCostSucEvo = costo;
+                                }
+                                c->lsobb.cantSucEvo += 1;
+                                c->lsobb.costAcumSucEvo += costo;
+                                c->lsobb.medCostSucEvo = (c->lsobb.costAcumSucEvo)/(c->lsobb.cantSucEvo);
+                                break;
 
-                            case 0: if(c->lsobb.maxCostFailEvo < costo){
-                                        c->lsobb.maxCostFailEvo = costo;
-                                    }
-                                    c->lsobb.cantFailEvo += 1;
-                                    c->lsobb.costAcumFailEvo += costo;
-                                    c->lsobb.medCostFailEvo = (c->lsobb.costAcumFailEvo)/(c->lsobb.cantFailEvo);
-                                    break;
-                        }
+                        case 0: if(c->lsobb.maxCostFailEvo < costo){
+                                    c->lsobb.maxCostFailEvo = costo;
+                                }
+                                c->lsobb.cantFailEvo += 1;
+                                c->lsobb.costAcumFailEvo += costo;
+                                c->lsobb.medCostFailEvo = (c->lsobb.costAcumFailEvo)/(c->lsobb.cantFailEvo);
+                                break;
                     }
-                    if(getCantABB(*abbTree) > 0){
-                        costo = 0.0;
-                        value = evocacionABB(*abbTree, &dev, &costo);
-                        switch(value){
-                            case 1: if(c->abb.maxCostSucEvo < costo){
-                                        c->abb.maxCostSucEvo = costo;
-                                    }
-                                    c->abb.cantSucEvo += 1;
-                                    c->abb.costAcumSucEvo += costo;
-                                    c->abb.medCostSucEvo = (c->abb.costAcumSucEvo)/(c->abb.cantSucEvo);
-                                    break;
+                    costo = 0.0;
+                    value = evocacionABB(*abbTree, &dev, &costo);
+                    switch(value){
+                        case 1: if(c->abb.maxCostSucEvo < costo){
+                                    c->abb.maxCostSucEvo = costo;
+                                }
+                                c->abb.cantSucEvo += 1;
+                                c->abb.costAcumSucEvo += costo;
+                                c->abb.medCostSucEvo = (c->abb.costAcumSucEvo)/(c->abb.cantSucEvo);
+                                break;
 
-                            case 0: if(c->abb.maxCostFailEvo < costo){
-                                        c->abb.maxCostFailEvo = costo;
-                                    }
-                                    c->abb.cantFailEvo += 1;
-                                    c->abb.costAcumFailEvo += costo;
-                                    c->abb.medCostFailEvo = (c->abb.costAcumFailEvo)/(c->abb.cantFailEvo);
-                                    break;
-                        }
+                        case 0: if(c->abb.maxCostFailEvo < costo){
+                                    c->abb.maxCostFailEvo = costo;
+                                }
+                                c->abb.cantFailEvo += 1;
+                                c->abb.costAcumFailEvo += costo;
+                                c->abb.medCostFailEvo = (c->abb.costAcumFailEvo)/(c->abb.cantFailEvo);
+                                break;
                     }
                 }
                 else{
