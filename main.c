@@ -1,7 +1,7 @@
 //Grupo 7  Sarubbi Franco - Orozco Mateo
 
 /*
-    Conclusion:
+    Conclusiones:
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|    
     |         Lista Secuencial Ordenada         |   |    Lista Secuencial Ordenada Biseccion    |   |         Arbol de Busqueda Binaria         |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
@@ -15,6 +15,25 @@
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
     |  Evoc. Frac |    42.00    |     16.70     |   |  Evoc. Frac |     6.00    |      4.87     |   |  Evoc. Frac |     10.00   |     5.27      |
     |-------------------------------------------|   |-------------------------------------------|   |-------------------------------------------|
+
+    Para obtener conclusiones de los rendimientos de las estructuras, vamos a analizar de forma general el comportamiento de cada una en 
+    las diversas operaciones:
+
+        Altas y Bajas: si nos enfocamos en los costos obtenidos por las tres estructuras al realizar altas y bajas, vemos que la mas eficiente
+        por bastante diferencia, es el Arbol Binario de Busqueda. Esto es de esperarse, ya que tanto la LSO, como la LSOBB, son listas que tienen
+        costo maximo de alta y baja de orden O(N). Por lo tanto, a medida que nuestra lista crece, el costo maximo aumenta. Dar de alta en la primer
+        posicion de la lista, implica N corrimientos de celdas, y dar de baja en la misma posicion tiene N-1 corrimientos de celdas, que tambien es O(N).
+        
+        Evocaciones: si miramos los costos obtenidos en las evocaciones, tanto exitosas como las que fracasan, es facil concluir que la peor
+        estructura es la LSO, ya que presenta los peores costos en ambas evocaciones. Algo que se podia predecir ya que la LSO para poder evocar
+        el ultimo elemento de la lista, debe recorrer todas las celdas hasta encontrarlo. Por lo que con N elementos, el costo sera N. Sin embargo
+        esto cambia drasticamente implementando la busqueda binaria. La LSOBB es la estructura mas eficiente al momento de evocar un elemento. Si bien
+        el ABB no tiene un mal rendimiento, la LSOBB en este caso saca diferencia ya que su costo maximo es logaritmico.
+
+    Al momento de elegir una de estas estructuras, es importante considerar a que accion se le dara mas relevancia y cual se realizar mas veces. Si 
+    lo mas importante son las altas y bajas, el ABB es por amplia diferencia la mejor opcion para esta tarea. Sin embargo, si lo importante es evocar 
+    datos de la forma mas eficiente posible, la LSOBB es la opcion indicada. Si hubiese que armar un podio, la estructura mas eficiente en lineas generales
+    es el ABB, seguido por la LSOBB, y el ultimo puesto se lo queda la LSO.
 */
 
 
@@ -35,69 +54,69 @@ void resetAll(list *, listBB *, abb *, int *, int *);   //Funcion para resetear 
 
 int main(){
 
-    abb abbTree;
-    list lso;
-    listBB lsobb;
-    Deliveries dev;
-    StructCost c;
-    int cant = 0, cantBB = 0, lect, menu;
+ abb abbTree;
+ list lso;
+ listBB lsobb;
+ Deliveries dev;
+ StructCost c;
+ int opcion, cant = 0, cantBB = 0, lect, menu;
 
-    init(&lso);
-    initLSOBB(&lsobb);
-    initABB(&abbTree);
-    initStructCost(&c);
+ init(&lso);
+ initLSOBB(&lsobb);
+ initABB(&abbTree);
+ initStructCost(&c);
 
+
+ do{
     do{
-        do{
-            printf("\n|===========================================|");
-            printf("\n|                BIENVENIDOS!               |");
-            printf("\n|              ENVIOS EL REVOLEO            |");
-            printf("\n|===========================================|");
-            printf("\n|              MENU DE OPCIONES             |");
-            printf("\n|===========================================|");
-            printf("\n|         1. Comparar estructuras           |");
-            printf("\n|         2. Mostrar estructuras            |");
-            printf("\n|         3. Mostrar costos cargados        |");
-            printf("\n|         4. Salir del sistema              |");
-            printf("\n|===========================================|\n\n");
-            scanf("%d", &menu);
-        }while(menu < 1 || menu > 4);
+        printf("\n|===========================================|");
+        printf("\n|                BIENVENIDOS!               |");
+        printf("\n|              ENVIOS EL REVOLEO            |");
+        printf("\n|===========================================|");
+        printf("\n|              MENU DE OPCIONES             |");
+        printf("\n|===========================================|");
+        printf("\n|         1. Comparar estructuras           |");
+        printf("\n|         2. Mostrar estructuras            |");
+        printf("\n|         3. Mostrar costos cargados        |");
+        printf("\n|         4. Salir del sistema              |");
+        printf("\n|===========================================|\n\n");
+        scanf("%d", &menu);
+    }while(menu < 1 || menu > 4);
     
-        switch(menu){
-            //Comparar estructuras
-            case 1: resetAll(&lso, &lsobb, &abbTree, &cant, &cantBB);
-                    initStructCost(&c);
-                    lect = lecturaOperaciones(&c, &lso, &lsobb, &abbTree, &cant, &cantBB);
-                    if(lect == 1){
-                        mostrarCostos(c);
-                    }
-                    else{
-                        printf("\n|-------------------------------------------------------------------|");
-                        printf("\n| No hay costos cargados. No se ha realizado la lectura por archivo |");
-                        printf("\n|-------------------------------------------------------------------|");
-                    }
-                    break;
+    switch(menu){
+        //Comparar estructuras
+        case 1: resetAll(&lso, &lsobb, &abbTree, &cant, &cantBB);
+                initStructCost(&c);
+                lect = lecturaOperaciones(&c, &lso, &lsobb, &abbTree, &cant, &cantBB);
+                if(lect == 1){
+                    mostrarCostos(c);
+                }
+                else{
+                    printf("\n|-------------------------------------------------------------------|");
+                    printf("\n| No hay costos cargados. No se ha realizado la lectura por archivo |");
+                    printf("\n|-------------------------------------------------------------------|");
+                }
+                break;
 
-            //Mostrar estructuras
-            case 2: mostrarEstructuras(abbTree, lso, lsobb, cant, cantBB);
-                    break;
+        //Mostrar estructuras
+        case 2: mostrarEstructuras(abbTree, lso, lsobb, cant, cantBB);
+                break;
 
-            //Mostrar los costos
-            case 3: mostrarCostos(c);
-                    break;
-        }
-        
-    }while(menu != 4);
+        //Mostrar los costos
+        case 3: mostrarCostos(c);
+                break;
+    }
+ }while(menu != 4);
 
  
-    printf("\n|===========================================|");
-    printf("\n|       GRACIAS POR USAR EL SISTEMA         |");
-    printf("\n|             ENVIOS EL REVOLEO             |");
-    printf("\n|===========================================|");
-    printf("\n|      Sarubbi Franco - Orozco Mateo        |");
-    printf("\n|===========================================|\n\n");
+ printf("\n|===========================================|");
+ printf("\n|       GRACIAS POR USAR EL SISTEMA         |");
+ printf("\n|             ENVIOS EL REVOLEO             |");
+ printf("\n|===========================================|");
+ printf("\n|      Sarubbi Franco - Orozco Mateo        |");
+ printf("\n|===========================================|\n\n");
 
-    return 0;
+ return 0;
 }
 
 

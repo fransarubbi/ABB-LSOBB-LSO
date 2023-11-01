@@ -43,7 +43,7 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
 
         while((li + 1) < ls){   
             
-            if((strcmp(lsobb.deliveriesListBB[t].code, c) < 0) || (strcmp(lsobb.deliveriesListBB[t].code, c) == 0)){  
+            if((strcmp(lsobb.deliveriesListBB[t].code, c) <= 0)){  
                 li = t - 1;   //elemento buscado es mayor o igual que lo que tengo en t
             }
             else{
@@ -59,6 +59,7 @@ int localizarLSOBB(listBB lsobb, char c[], int *position, float *costo){   //Loc
 
         if(vector[ls] == 0){
             costLoc += 1;
+            vector[ls] = 1;
         }
         *costo = costLoc;
         
